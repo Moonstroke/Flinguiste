@@ -1,2 +1,5 @@
 # Flinguiste
-## Application android, quizz de culture générale sur la linguistique française (vocabulaire, expressions, argot...)
+## Application android
+### Quizz de culture générale en linguistique française (vocabulaire, expressions, argot, etc)
+
+> Que du bonheur en perspective !
