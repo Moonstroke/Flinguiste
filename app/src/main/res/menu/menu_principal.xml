@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="fr.joh1.android.flinguiste.ActivityPrincipale">
+    <item
+        android:id="@+id/reglages"
+        android:orderInCategory="100"
+        android:title="@string/action_reglages"
+        app:showAsAction="never" />
+</menu>

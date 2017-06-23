@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+	tools:context="fr.joh1.android.flinguiste.FragmentActivityPrincipale"
+	tools:showIn="@layout/activity_principale"
+	android:layout_width="match_parent" android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:padding="16dp">
+	<!-- xmlns:app="http://schemas.android.com/apk/res-auto" -->
+
+	<TextView
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:layout_marginBottom="8dp"
+			android:text="@string/titre_jeu_vocab"
+	/>
+	<LinearLayout
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginBottom="32dp"
+	>
+		<Button
+				android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/nv_jeu_vocab"
+				android:onClick="nvJeuVocab"
+		/>
+		<Spinner
+				android:id="@+id/s__niv_vocab"
+				android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:layout_weight="4"
+		/>
+	</LinearLayout>
+
+
+	<TextView
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:layout_marginBottom="8dp"
+			android:text="@string/titre_jeu_expr"
+		/>
+	<LinearLayout
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginBottom="32dp"
+		>
+		<Button
+				android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/nv_jeu_vocab"
+				android:onClick="nvJeuExpr"
+		/>
+		<Spinner
+				android:id="@+id/s__niv_expr"
+				android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:layout_weight="4"
+		/>
+	</LinearLayout>
+
+	<Button
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:text="@string/parametres"
+	/>
+
+</LinearLayout>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Flinguiste</string>
+    <string name="action_reglages">Réglages</string>
+    <string name="titre_jeu_vocab">Questionnaire de vocabulaire</string>
+    <string name="titre_jeu_expr">Questionnaire d\'expressions</string>
+    <string name="nv_jeu_vocab">Nouveau jeu</string>
+    <string name="nv_jeu_expr">Nouveau jeu</string>
+	<string name="parametres">Paramètres</string>
+</resources>
