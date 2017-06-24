@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,16 +15,28 @@ import android.widget.AdapterView;
  */
 public class ActivityPrincipale extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    @Override
+	private static final String ETIQ_LOG = "flinguiste";
+
+	private AssistantSQLite assistantSQLite;
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_principale);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
+		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
     }
+
+    @Override
+	public void onDestroy() {
+		assistantSQLite.fermer();
+
+		assistantSQLite = null;
+
+		super.onDestroy();
+	}
 
 
 	/**
@@ -59,6 +72,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 
 		switch(item.getItemId()) {
 			case R.id.reglages:
+				Log.d(ETIQ_LOG, "Réglages");
 				return true;
 			default:
 				return false;

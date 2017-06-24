@@ -4,8 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
@@ -23,6 +27,8 @@ import java.util.Random;
  * du code {@code SQL} (c'est bien le principe de l'*encapsulation* !)
  */
 class AssistantSQLite extends SQLiteOpenHelper {
+
+	private static final String ETIQ_LOG = "flinguiste";
 
 	private SQLiteDatabase bd;
 
@@ -43,9 +49,19 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private static final String COL_NIV = "niv";
 
 
-	AssistantSQLite(Context context) {
+	AssistantSQLite(Context context, boolean lectureSeule) {
 		super(context, BD_NOM, null, BD_VERSION);
+		bd = lectureSeule ? getReadableDatabase() : getWritableDatabase();
 	}
+
+
+	/**
+	 * Enveloppe pour la méthode {@code {@link android.database.sqlite.SQLiteDatabase#close() close}}
+	 */
+	public void fermer() {
+		bd.close();
+	}
+
 
 	/**
 	 * Instancie l'utilitaire et lui donne un accès à la base de données sur laquelle interagir.
@@ -63,47 +79,41 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Met à jour la base.
+	 * Théoriquement sert à mettre la base à jour, mais en l'occurence ne fait rien.
 	 *
 	 * @param base        la base de données TODO vérifier si peut être différent de l'attribut
 	 * @param versionPrec la version de la base avant mise à jour
 	 * @param versionNouv la version de la base après mise à jour
 	 */
 	@Override
-	public void onUpgrade(SQLiteDatabase base, int versionPrec, int versionNouv) {
-
-		if(BD_VERSION != versionPrec)
-			bd = base;
-
-		if(versionNouv == BD_VERSION)
-			viderTables();
-		else if(versionNouv > BD_VERSION) {
-			BD_VERSION = versionNouv;
-		}
-
-		remplirBD();
-	}
+	public void onUpgrade(SQLiteDatabase base, int versionPrec, int versionNouv) {}
 
 
 	/**
-	 * Enrobe la création des tables, en supposant qu'elles n'existent pas déja.
+	 * Enveloppe la création des tables, en supposant qu'elles n'existent pas déja.
 	 */
 	private void creerTables() {
-		String sqlCourt = "CREATE TABLE ? (? INTEGER PRIMARY KEY AUTOINCREMENT, ? TEXT NOT NULL)";
-		String sqlLong = "CREATE TABLE ? (? INTEGER PRIMARY KEY AUTOINCREMENT, ? TEXT NOT NULL, ? INTEGER ? NULL, ? CHARACTER ? NULL FOREIGN KEY (?) REFERENCES ? (?))";
+		/*
+		String sqlCourt = "CREATE TABLE ? (? INTEGER PRIMARY KEY, ? TEXT NOT NULL)";
+		String sqlLong = "CREATE TABLE ? (? INTEGER PRIMARY KEY, ? TEXT NOT NULL, ? INTEGER ? NULL, ? CHARACTER ? NULL FOREIGN KEY (?) REFERENCES ? (?))";
 		bd.execSQL(sqlCourt, new Object[] {TABLE_NIVEAU, COL_ID_NIV, COL_NIV});
 		bd.execSQL(sqlLong, new Object[] {TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, "NOT", COL_TYPE, "NOT", COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV});
 		bd.execSQL(sqlLong, new Object[] {TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, "DEFAULT", COL_TYPE, "DEFAULT", COL_ID_MOT, TABLE_MOT, COL_ID_MOT});
+ 		*/
+		String sql1 = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL)";
+		String sql2 = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s INTEGER NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s))";
+		bd.execSQL(String.format(sql1, TABLE_NIVEAU, COL_ID_NIV, COL_NIV));
+		bd.execSQL(String.format(sql2, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, COL_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV));
+		bd.execSQL(String.format(sql2, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, COL_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT));
 	}
 
 
 	/**
-	 * Enrobe également la création des tables, mais les efface d'abord.
+	 * Enveloppe également la création des tables, mais les efface d'abord.
 	 */
 	private void recreerTables() {
 		for(String t: new String[] {TABLE_NIVEAU, TABLE_MOT, TABLE_DEFINITION})
 			bd.execSQL("DROP TABLE ?", new String[] {t});
-
 		creerTables();
 	}
 
@@ -132,7 +142,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		ligne.put(COL_TYPE, String.valueOf(type));
 
 		int id = (int)bd.insert(TABLE_MOT, null, ligne);
-
 		ligne = new ContentValues();
 		ligne.put(COL_DEF, definition);
 		ligne.put(COL_ID_MOT, id);
@@ -171,9 +180,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		ligne.put(COL_DEF, definition);
 		ligne.putNull(COL_TYPE);
 		ligne.putNull(COL_ID_MOT);
-
 		bd.insert(TABLE_DEFINITION, null, ligne);
-
 	}
 
 
@@ -195,61 +202,79 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Replit les tables de la base de données avec un panel de mots soigneusement choisis par
+	 * Replit les tables de la base de données avec un panel de mots, soigneusement choisis par
 	 * votre humble serviteur-codeur.
 	 */
 	private void remplirBD() {
 
-		ajouterNiveau(1, "Cultivé");
-		ajouterNiveau(2, "Connaisseur");
-		ajouterNiveau(3, "Omniscient");
+		Log.d(ETIQ_LOG, "Remplissage de la base de données");
 
-		ajouterMot("céphalée", 1, 'n', "migraine");
-		ajouterMot("équipollent", 1, 'j', "équivalent");
-		ajouterMot("hirsute", 1, 'j', "au pelage hérissé et sale");
-		ajouterMot("nyctalope", 1, 'j', "qui peut voir dans l'obscurité");
-		ajouterMot("plébiscité", 1, 'j', "apprécié par la majorité populaire");
-		ajouterMot("recrudescence", 1, 'n', "retour de quelque chose en plus fort qu'avant");
-		ajouterMot("stochastique", 1, 'j', "aléatoire");
-		ajouterMot("véhémence", 1, 'n', "comportement violent");
-		ajouterMot("vestibule", 1, 'n', "couloir d'accès");
-		ajouterMot("tergiverser", 1, 'v', "tourner autour du pot");
+		bd.beginTransaction();
 
-		ajouterMot("badinage", 2, 'n', "futilité plaisante, ou plaisanterie futile");
-		ajouterMot("crécelle", 2, 'n', "instrument au son désagréable");
-		ajouterMot("miasme", 2, 'n', "émanation fétide de corps décomposés");
-		ajouterMot("pléthore", 2, 'n', "grande quatité");
-		ajouterMot("procrastiner", 2, 'v', "toujours remettre au lendemain");
-		ajouterMot("pugilat", 2, 'n', "bagarre à coups de poings");
-		ajouterMot("superfétatoire", 2, 'j', "superflu");
-		ajouterMot("truculent", 2, 'j', "pittoresque");
+		try {
+			ajouterNiveau(1, "Cultivé");
+			ajouterNiveau(2, "Connaisseur");
+			ajouterNiveau(3, "Omniscient");
 
-		ajouterMot("ambage", 3, 'n', "hésitation à s'exprimer");
-		ajouterMot("attrition", 3, 'n', "diminution naturelle d'une quantité de choses ou de personnes");
-		ajouterMot("cuniculiculture", 3, 'n', "l'élevage de petits lapins");
-		ajouterMot("icoglan", 3, 'n', "petit page du Sultan");
-		ajouterMot("innutrition", 3, 'n', "fait de s'approprier (involotairement) les idées d'un autre");
-		ajouterMot("maroufle", 3, 'n', "femelle du gnou");
-		ajouterMot("pétrichor", 3, 'n', "l'odeur de la terre après la pluie");
-		ajouterMot("phylactère", 3, 'n', "bulle de bande dessinée");
-		ajouterMot("sérendipité", 3, 'n', "fait de faire des découvertes par hasard");
-		ajouterMot("truchement", 3, 'n', "fait de servir d'intermédiaire");
+			ajouterMot("céphalée", 1, 'n', "migraine");
+			ajouterMot("équipollent", 1, 'j', "équivalent");
+			ajouterMot("hirsute", 1, 'j', "au pelage hérissé et sale");
+			ajouterMot("nyctalope", 1, 'j', "qui peut voir dans l'obscurité");
+			ajouterMot("plébiscité", 1, 'j', "apprécié par la majorité populaire");
+			ajouterMot("recrudescence", 1, 'n', "retour de quelque chose en plus fort qu'avant");
+			ajouterMot("stochastique", 1, 'j', "aléatoire");
+			ajouterMot("véhémence", 1, 'n', "comportement violent");
+			ajouterMot("vestibule", 1, 'n', "couloir d'accès");
+			ajouterMot("tergiverser", 1, 'v', "tourner autour du pot");
 
-		ajouterDefinition("42");
-		ajouterDefinition("la réponse D");
-		ajouterDefinition("mauvaise réponse");
+			ajouterMot("badinage", 2, 'n', "futilité plaisante, ou plaisanterie futile");
+			ajouterMot("crécelle", 2, 'n', "instrument au son désagréable");
+			ajouterMot("miasme", 2, 'n', "émanation fétide de corps décomposés");
+			ajouterMot("pléthore", 2, 'n', "grande quatité");
+			ajouterMot("procrastiner", 2, 'v', "toujours remettre au lendemain");
+			ajouterMot("pugilat", 2, 'n', "bagarre à coups de poings");
+			ajouterMot("superfétatoire", 2, 'j', "superflu");
+			ajouterMot("truculent", 2, 'j', "pittoresque");
 
+			ajouterMot("ambage", 3, 'n', "hésitation à s'exprimer");
+			ajouterMot("attrition", 3, 'n', "diminution naturelle d'une quantité de choses ou de personnes");
+			ajouterMot("cuniculiculture", 3, 'n', "l'élevage de petits lapins");
+			ajouterMot("icoglan", 3, 'n', "petit page du Sultan");
+			ajouterMot("innutrition", 3, 'n', "fait de s'approprier (involotairement) les idées d'un autre");
+			ajouterMot("maroufle", 3, 'n', "femelle du gnou");
+			ajouterMot("pétrichor", 3, 'n', "l'odeur de la terre après la pluie");
+			ajouterMot("phylactère", 3, 'n', "bulle de bande dessinée");
+			ajouterMot("sérendipité", 3, 'n', "fait de faire des découvertes par hasard");
+			ajouterMot("truchement", 3, 'n', "fait de servir d'intermédiaire");
+
+			ajouterDefinition("42");
+			ajouterDefinition("la réponse D");
+			ajouterDefinition("mauvaise réponse");
+
+			bd.setTransactionSuccessful();
+		}
+		catch(SQLiteException e) {
+			Log.e(ETIQ_LOG, "Erreur SQLite : " + e.getMessage());
+		}
+		finally {
+			bd.endTransaction();
+		}
 	}
 
 
 	/**
-	 * Renvoie un {@code Cursor} sur les niveaux de jeu à adapter dans les {@code Spinners}
-	 * de l'activité principale.
+	 * Renvoie un {@code {@link SimpleCursorAdapter}} sur les niveaux de jeu à associer
+	 * aux {@code {@link android.widget.Spinner spinners}} de l'activité principale.
 	 *
-	 * @return ce fameux {@code Cursor} !
+	 * @return ce fameux adaptateur !
 	 */
-	Cursor obtNiveaux() {
-		return bd.rawQuery("SELECT ? AS _id, ? FROM ? ORDER BY _id", new String[] {COL_ID_NIV, COL_NIV, TABLE_NIVEAU});
+	SimpleCursorAdapter obtNiveaux(Context ctx, int agencement, int agencementMenuDeroulant) {
+		Cursor niveaux = bd.rawQuery(String.format("SELECT %s AS _id, %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, TABLE_NIVEAU), null);
+
+		SimpleCursorAdapter adapteur = new SimpleCursorAdapter(ctx, agencement, niveaux, new String[] {COL_NIV}, new int[] {0}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		adapteur.setDropDownViewResource(agencementMenuDeroulant);
+
+		return adapteur;
 	}
 
 
@@ -267,17 +292,15 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	public String motAleat(int niveau, ArrayList<String> mots) {
 		Cursor c = bd.rawQuery("SELECT ? FROM ? WHERE ? = ? AND ? NOT IN ? ORDER BY RANDOM LIMIT 1", new String[] {COL_MOT, TABLE_MOT, COL_ID_NIV, String.valueOf(niveau), COL_MOT, sqlListe(mots)});
 		int col = c.getColumnIndexOrThrow(COL_MOT);
-
 		c.moveToFirst();
 		String mot = c.getString(col);
 		c.close();
-
 		return mot;
 	}
 
 
 	/**
-	 * Renvoie  une liste de longueur donnée de {@code Reponse}s parmi lesquelles une (TODO et une seule)
+	 * Renvoie  une liste de longueur donnée de {@link Reponse Reponses} parmi lesquelles une (TODO et une seule)
 	 * correspond au mot indiqué.
 	 *
 	 * Conçue pour être appelée après {@code motAleat}, avec le mot que cette méthode a retourné.
@@ -288,7 +311,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return la liste sus-mentionnée
 	 */
 	public List<Reponse> propositions(String mot, int nb) {
-
 		List<Reponse> definitions = new ArrayList<>(nb);
 
 		// sélection de la bonne réponse
@@ -310,8 +332,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 		// bonne réponse ajoutée aléatoirement dans l'ArrayList
 		definitions.add(new Random().nextInt(nb), new Reponse(true, bonneReponse));
-
-		//c = bd.query(false, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEFINITION}, "? = ?", new String[] {COL_MOT, mot}, null, null, null, null);
 
 		return definitions;
 	}
