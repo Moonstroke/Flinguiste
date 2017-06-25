@@ -15,21 +15,19 @@ import android.widget.AdapterView;
  */
 public class ActivityPrincipale extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-	private static final String ETIQ_LOG = "flinguiste";
-
 	private AssistantSQLite assistantSQLite;
 
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_principale);
+		setContentView(R.layout.activity_principale);
 
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
-    }
+	}
 
-    @Override
+	@Override
 	public void onDestroy() {
 		assistantSQLite.fermer();
 
@@ -48,12 +46,12 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * @return toujours {@code true} (pour l'instant)
 	 */
 	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_principal, menu);
+		getMenuInflater().inflate(R.menu.menu_principal, menu);
 
-        return true;
-    }
+		return true;
+	}
 
 
 	/**
@@ -67,17 +65,17 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 *
 	 * TODO : quelque chose d'intéressant peut-être...
 	 */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch(item.getItemId()) {
 			case R.id.reglages:
-				Log.d(ETIQ_LOG, "Réglages");
+				Journal.debg("Réglages");
 				return true;
 			default:
 				return false;
 		}
-    }
+	}
 
 
 	/**

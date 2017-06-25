@@ -23,12 +23,10 @@ import java.util.Random;
  * Cette classe est un utilitaire servant de manipulateur pour la base de données {@code SQLite}.
  *
  *  Elle apporte à celle-ci un niveau d'abstraction qui, globalement, ajoute en légèreté au code
- * des autres classes ; celles-ci n'ont donc aucune connaissance des transactions opérées et
+ * des autres classes ; celles-ci n'ont donc aucune connaissance des transactions opérées ou
  * du code {@code SQL} (c'est bien le principe de l'*encapsulation* !)
  */
 class AssistantSQLite extends SQLiteOpenHelper {
-
-	private static final String ETIQ_LOG = "flinguiste";
 
 	private SQLiteDatabase bd;
 
@@ -207,7 +205,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	private void remplirBD() {
 
-		Log.d(ETIQ_LOG, "Remplissage de la base de données");
+		Journal.debg("Remplissage de la base de données");
 
 		bd.beginTransaction();
 
@@ -254,7 +252,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 			bd.setTransactionSuccessful();
 		}
 		catch(SQLiteException e) {
-			Log.e(ETIQ_LOG, "Erreur SQLite : " + e.getMessage());
+			Journal.err("Erreur SQLite : " + e.getMessage());
 		}
 		finally {
 			bd.endTransaction();

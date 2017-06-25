@@ -42,10 +42,10 @@ public class FragmentActivityPrincipale extends Fragment {
 	}
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup cont, Bundle savedInstanceState) {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup cont, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_main, cont, false);
-    }
+	}
 
 	@Override
 	public void onActivityCreated(Bundle sauvegarde) {
