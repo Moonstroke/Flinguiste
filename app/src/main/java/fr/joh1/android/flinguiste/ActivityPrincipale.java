@@ -1,5 +1,7 @@
 package fr.joh1.android.flinguiste;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 /**
  * @author joH1
@@ -16,6 +19,14 @@ import android.widget.AdapterView;
 public class ActivityPrincipale extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
 	private AssistantSQLite assistantSQLite;
+
+	private static final int NV_PARTIE_VOCAB_CODE = 1;
+	private static final int NV_PARTIE_EXPR_CODE = 2;
+
+	private int niveau;
+	private int choix;
+	private int total;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +36,11 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
+		niveau = 0;
+
+		// TODO récupérer depuis les paramètres
+		choix = 4;
+		total = 10;
 	}
 
 	@Override
@@ -77,18 +93,36 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		}
 	}
 
+	@Override
+	public void onActivityResult(int codeRequete, int codeResultat, Intent i) {
+		if(i == null) return;
+
+		Bundle donnees = i.getExtras();
+
+		if(codeResultat == Activity.RESULT_OK)
+			switch(codeRequete) {
+				case NV_PARTIE_EXPR_CODE:
+					break;
+				case NV_PARTIE_VOCAB_CODE:
+					break;
+				default:
+					break;
+			}
+	}
+
 
 	/**
 	 * Gère les clics sur les {@code spinners} de choix de niveau.
 	 *
-	 * @param parent la vue contenant les éléments cliquables
-	 * @param v      la vue cliquée
-	 * @param pos    la position, à partir de 0, de la vue cliquée dans {@code parent}
-	 * @param id     l'identifiant de la vue cliquée (inutile, en général)
+	 * @param l  la vue contenant les éléments cliquables
+	 * @param v  la vue cliquée
+	 * @param i  la position, à partir de 0, de la vue cliquée dans {@code parent}
+	 * @param id l'identifiant de la vue cliquée (inutile, en général)
 	 */
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
-		Snackbar.make(v, String.valueOf(pos + 1), Snackbar.LENGTH_SHORT).show();
+	public void onItemSelected(AdapterView<?> l, View v, int i, long id) {
+		niveau = i + 1;
+		Toast.makeText(this, String.valueOf(niveau), Toast.LENGTH_SHORT).show();
 	}
 
 
@@ -97,11 +131,25 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * intéressant...
 	 * Gère le fait de ne pas choisir un élément dans la liste, mais cliquer sur Précédent.
 	 *
-	 * @param parent la vue contenant les éléments cliquables
+	 * @param l la vue contenant les éléments cliquables
 	 */
 	@Override
-	public void onNothingSelected(AdapterView<?> parent) {}
+	public void onNothingSelected(AdapterView<?> l) {
+		Toast.makeText(this, "Il faut choisir un niveau !", Toast.LENGTH_SHORT).show();
+	}
 
+
+	private void lancerPartie(int code) {
+		if(niveau == 0) {
+			Toast.makeText(this, "Niveau 0 pas encore implémenté", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		Bundle donnees = new Bundle(2);
+		donnees.putInt("n", niveau);
+		donnees.putInt("c", choix);
+		donnees.putInt("t", total);
+		startActivityForResult(new Intent(this, JeuActivity.class).replaceExtras(donnees), code);
+	}
 
 	/**
 	 * Appelée au clic sur le bouton de jeu de vocabulaire.
@@ -111,7 +159,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 *          donc à forger si on veut en faire quelque chose.
 	 */
 	public void nvJeuVocab(View v) {
-
+		lancerPartie(NV_PARTIE_VOCAB_CODE);
 	}
 
 	/**
@@ -123,7 +171,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 *          de type générique {@code View}
 	 */
 	public void nvJeuExpr(View v) {
-
+		//lancerPartie(NV_PARTIE_EXPR_CODE);
+		Toast.makeText(this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
 	}
 
 	/**
@@ -135,7 +184,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * @param v le bouton « Paramètres »
 	 */
 	public void param(View v) {
-
+		Toast.makeText(this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
 	}
 
 }
