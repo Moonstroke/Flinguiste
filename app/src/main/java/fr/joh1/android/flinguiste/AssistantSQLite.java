@@ -7,13 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
+import android.widget.CursorAdapter;
+import android.widget.SimpleCursorAdapter;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -45,6 +43,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private static final String COL_DEF = "def";
 	private static final String COL_ID_NIV = "id_niv";
 	private static final String COL_NIV = "niv";
+
+	static final class BaseEpuiseeException extends Exception {}
 
 
 	AssistantSQLite(Context context, boolean lectureSeule) {
@@ -285,14 +285,22 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return eh bien : le mot !
 	 *
-	 * TODO optimiser ? Une {@code ArrayList} de {@code String}, c'est gourmand !
+	 * TODO optimiser ? Un tableau de {@code String}, c'est gourmand ! (moins qu'une AL mais bon)
 	 */
-	public String motAleat(int niveau, ArrayList<String> mots) {
+	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
 		Cursor c = bd.rawQuery("SELECT ? FROM ? WHERE ? = ? AND ? NOT IN ? ORDER BY RANDOM LIMIT 1", new String[] {COL_MOT, TABLE_MOT, COL_ID_NIV, String.valueOf(niveau), COL_MOT, sqlListe(mots)});
 		int col = c.getColumnIndexOrThrow(COL_MOT);
 		c.moveToFirst();
-		String mot = c.getString(col);
-		c.close();
+		String mot;
+		try {
+			mot = c.getString(col);
+		}
+		catch(IndexOutOfBoundsException e) {
+			throw new BaseEpuiseeException();
+		}
+		finally {
+			c.close();
+		}
 		return mot;
 	}
 
@@ -308,8 +316,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return la liste sus-mentionnée
 	 */
-	public List<Reponse> propositions(String mot, int nb) {
-		List<Reponse> definitions = new ArrayList<>(nb);
+	public ArrayList<Reponse> propositions(String mot, int nb) {
+		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
 		// sélection de la bonne réponse
 		Cursor c = bd.rawQuery("SELECT ?, ? FROM ? NATURAL JOIN ? WHERE ? = ? LIMIT 1", new String[] {COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot});
@@ -336,20 +344,21 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Traduit une {@code List} de {@code String} en une liste intelligible en {@code SQL}
+	 * Traduit un tableau de {@code String} en une liste {@code SQL} intelligible
 	 *
 	 * @param als la liste des chaînes de caractères à transcrire
-	 * @return une chaîne correspondant à une chaîne {@code SQL} valide
+	 *
+	 * @return une chaîne de {@code SQL} (valide)
 	 */
 	@NonNull
-	private String sqlListe(ArrayList<String> als) {
-		int s = als.size();
-		if(s == 0)
+	private String sqlListe(String[] als) {
+		int s;
+		if((s = als.length) == 0)
 			return "()";
-		StringBuilder res = new StringBuilder(s * 10);
-		res.append("('").append(als.get(0)).append("'");
+		StringBuilder res = new StringBuilder(s * 12); // On s'octroie 10 caractères par mot, en gros
+		res.append("('").append(als[0]).append("'");
 		for(int i = 1; i < s; ++i)
-			res.append(", '").append(als.get(i)).append("'");
+			res.append(", '").append(als[i]).append("'");
 		res.append(")");
 		return res.toString();
 	}
