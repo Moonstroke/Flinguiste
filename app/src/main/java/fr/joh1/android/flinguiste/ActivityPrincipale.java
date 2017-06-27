@@ -24,8 +24,6 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	private static final int NV_PARTIE_EXPR_CODE = 2;
 
 	private int niveau;
-	private int choix;
-	private int total;
 
 
 	@Override
@@ -37,10 +35,6 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
 		niveau = 0;
-
-		// TODO récupérer depuis les paramètres
-		choix = 4;
-		total = 10;
 	}
 
 	@Override
@@ -146,8 +140,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		}
 		Bundle donnees = new Bundle(2);
 		donnees.putInt("n", niveau);
-		donnees.putInt("c", choix);
-		donnees.putInt("t", total);
+		donnees.putInt("c", Parametres.choix);
+		donnees.putInt("t", Parametres.total);
 		startActivityForResult(new Intent(this, JeuActivity.class).replaceExtras(donnees), code);
 	}
 
