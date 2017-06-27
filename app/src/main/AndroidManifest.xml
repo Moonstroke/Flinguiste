@@ -1,38 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-		  package="fr.joh1.android.flinguiste">
-
-	<application
-		android:allowBackup="true"
-		android:fullBackupContent="false"
-		android:icon="@mipmap/ic_launcher"
-		android:label="@string/nom_appli"
-		android:roundIcon="@mipmap/ic_launcher_round"
-		android:supportsRtl="true"
-		android:theme="@style/AppTheme">
-        <activity
-			android:name=".ActivityPrincipale"
-			android:label="@string/nom_appli">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="fr.joh1.android.flinguiste">
+	<application android:allowBackup="true" android:fullBackupContent="false" android:icon="@mipmap/ic_launcher" android:label="@string/nom_appli" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:theme="@style/AppTheme">
+        <activity android:name=".ActivityPrincipale" android:label="@string/nom_appli">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.VIEW"/>
-
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
-        <activity
-			android:name=".JeuActivity"
-			android:label="@string/jeu_acti"
-			android:parentActivityName=".ActivityPrincipale">
+        <activity android:name=".JeuActivity" android:label="@string/jeu_acti" android:parentActivityName=".ActivityPrincipale">
 		</activity>
-        <activity
-			android:name=".ParametresActivity"
-			android:label="@string/param_acti"
-			android:parentActivityName=".ActivityPrincipale">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="fr.joh1.android.flinguiste.ActivityPrincipale"/>
+        <activity android:name=".ParametresActivity" android:label="@string/param_acti" android:parentActivityName=".ActivityPrincipale">
 		</activity>
     </application>
-
 </manifest>
