@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +13,7 @@ import android.widget.Toast;
 
 /**
  * @author joH1
+ *
  */
 public class ActivityPrincipale extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -27,11 +26,11 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected void onCreate(Bundle sauvegarde) {
+		super.onCreate(sauvegarde);
 
 		setContentView(R.layout.activity_principale);
-
+		getResources().getString(R.string.texte_choix_niv);
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
 		niveau = 0;
@@ -69,11 +68,11 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * clics sur les boutons *Accueil* et *Précédent*, tant qu'on spécifie une activité parente dans
 	 * le manifeste.
 	 *
+	 * TODO : quelque chose d'intéressant peut-être...
+	 *
 	 * @param item l'élément cliqué
 	 *
 	 * @return vrai si {@code item } est l'élément "Réglages"
-	 *
-	 * TODO : quelque chose d'intéressant peut-être...
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -121,8 +120,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 
 
 	/**
-	 * Cette fonction fait rarement quelque chose d'intéressant, mais cela pourrait être
-	 * intéressant...
+	 * Cette fonction fait rarement quelque chose d'intéressant, mais il faut l'implémenter
+	 *
 	 * Gère le fait de ne pas choisir un élément dans la liste, mais cliquer sur Précédent.
 	 *
 	 * @param l la vue contenant les éléments cliquables
@@ -178,7 +177,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * @param v le bouton « Paramètres »
 	 */
 	public void param(View v) {
-		Toast.makeText(this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+		startActivity(new Intent(this, ParametresActivity.class));
 	}
 
 }
