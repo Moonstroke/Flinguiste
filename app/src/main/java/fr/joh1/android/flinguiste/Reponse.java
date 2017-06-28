@@ -6,6 +6,7 @@ package fr.joh1.android.flinguiste;
  *
  * Petite classe utilitaire pour envelopper une chaîne et un booléen, contenant une définition
  * et sa validité (ou non) pour le mot mystère en cours de jeu
+ *
  */
 class Reponse {
 
@@ -14,15 +15,17 @@ class Reponse {
 	private String def;
 
 
-	Reponse(boolean estBonne, String reponse) {
+	Reponse(boolean estBonne, String definition) {
 		bonne = estBonne;
-		def = reponse;
+		def = definition;
 	}
 
 
 	/**
 	 * surcharge de la méthode d'{@code Object} pour ne renvoyer que la définition de cet objet
 	 * (pratique car c'est cette méthode qui est appelée dans un {@code ArrayAdapter} !)
+	 *
+	 * TODO regarder du côté de Adapter.setCursorToStringConverter (peut être intéressant)
 	 *
 	 * @return la définition
 	 */
@@ -33,8 +36,8 @@ class Reponse {
 
 
 	/**
-	 * définie par conciliation envers les conventions Java, on aurait pu aussi bien rendre
-	 * l'attribut public et l'appeler directement, mais bon... Je suis conciliant !
+	 * définie par conciliation envers les conventions OO, on aurait pu aussi bien rendre
+	 * l'attribut public et l'appeler directement, mais bon.
 	 *
 	 * @return la réponse est-elle la bonne réponse ?
 	 */
