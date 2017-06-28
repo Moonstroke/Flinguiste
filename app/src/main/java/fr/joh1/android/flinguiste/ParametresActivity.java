@@ -1,34 +1,20 @@
 package fr.joh1.android.flinguiste;
 
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 import android.widget.EditText;
-
-import java.util.List;
+import android.widget.Spinner;
 
 /**
  * @author joH1
+ *
  */
 public class ParametresActivity extends AppCompatActivity {
 
@@ -38,36 +24,39 @@ public class ParametresActivity extends AppCompatActivity {
 	private AppCompatEditText etChoix;
 	private AppCompatEditText etTotal;
 
-	private AppCompatEditText etAjMotNiv;
-	private AppCompatEditText etAjMotType;
+	private Spinner sAjMotNiv;
+	private Spinner sAjMotType;
 	private AppCompatEditText etAjMotMot;
 	private AppCompatEditText etAjMotDef;
 
-	private AppCompatEditText etAjDefType;
+	private Spinner sAjDefType;
 	private AppCompatEditText etAjDefDef;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
+		Context ctx = getApplicationContext();
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_jeu);
 
-		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
+		assistantSQLite = new AssistantSQLite(ctx, false);
 
 		etChoix = (AppCompatEditText)findViewById(R.id.et_choix);
 		etTotal = (AppCompatEditText)findViewById(R.id.et_total);
 
-		etAjMotNiv = (AppCompatEditText)findViewById(R.id.et_aj_mot_niv);
-		etAjMotType = (AppCompatEditText)findViewById(R.id.et_aj_mot_type);
+		sAjMotNiv = (Spinner)findViewById(R.id.s_aj_mot_niv);
+		sAjMotType = (Spinner)findViewById(R.id.s_aj_mot_type);
 		etAjMotMot = (AppCompatEditText)findViewById(R.id.et_aj_mot_mot);
 		etAjMotDef = (AppCompatEditText)findViewById(R.id.et_aj_mot_def);
 
-		etAjDefType = (AppCompatEditText)findViewById(R.id.et_aj_def_type);
+		sAjDefType = (Spinner)findViewById(R.id.s_aj_def_type);
 		etAjDefDef = (AppCompatEditText)findViewById(R.id.et_aj_def_def);
 
 		etChoix.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override public void onFocusChange(View v, boolean hasFocus) {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
 				if(!hasFocus) {
 					int choix = Integer.parseInt(String.valueOf(((EditText)v).getText()));
 					if(choix != Parametres.choix)
@@ -77,7 +66,8 @@ public class ParametresActivity extends AppCompatActivity {
 		});
 
 		etTotal.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override public void onFocusChange(View v, boolean hasFocus) {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
 				if(!hasFocus) {
 					int total = Integer.parseInt(String.valueOf(((EditText)v).getText()));
 					if(total != Parametres.total)
@@ -85,20 +75,37 @@ public class ParametresActivity extends AppCompatActivity {
 				}
 			}
 		});
+
+		String colType = "type";
+		SimpleCursorAdapter adapteur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		adapteur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		sAjMotType.setAdapter(adapteur);
+		sAjMotType.setPrompt(ctx.getResources().getString(R.string.texte_aj_mot_type));
+		adapteur.changeCursor(assistantSQLite.niveaux(colType, true));
+		sAjDefType.setAdapter(adapteur);
+		sAjDefType.setPrompt(ctx.getResources().getString(R.string.texte_aj_def_type));
+		String colNiv = "niveau";
+		adapteur.changeCursorAndColumns(assistantSQLite.niveaux(colNiv, false), new String[] {colNiv}, new int[] {1});
+		sAjMotNiv.setAdapter(adapteur);
+		sAjMotNiv.setPrompt(ctx.getResources().getString(R.string.texte_aj_mot_niv));
+
 	}
 
 
 	public void ajMot(View v) {
 		String mot = String.valueOf(etAjMotMot.getText());
-		int niveau = Integer.parseInt(String.valueOf(etAjMotNiv.getText()));
-		char type = (char)(etAjMotType.getText().charAt(0) - 32);
+		int niveau = sAjMotNiv.getSelectedItemPosition() + 1;
+		int type = sAjMotType.getSelectedItemPosition();
 		String def = String.valueOf(etAjMotDef.getText());
 		assistantSQLite.ajouterMot(mot, niveau, type, def);
 	}
 
 	public void ajDef(View v) {
-		char type = (char)(etAjDefType.getText().charAt(0) - 32);
+		int type = sAjDefType.getSelectedItemPosition();
 		String def = String.valueOf(etAjDefDef.getText());
 		assistantSQLite.ajouterDefinition(def, type);
 	}
+
+
 }

@@ -5,13 +5,16 @@
 	<string name="action_reglages">action_reglages</string>
 	<string name="titre_jeu_vocab">titre_jeu_vocab</string>
 	<string name="titre_jeu_expr">titre_jeu_expr</string>
-	<string name="nv_jeu_vocab">nv_jeu_vocab</string>
-	<string name="nv_jeu_expr">nv_jeu_expr</string>
+	<string name="texte_choix_niv">texte_choix_niv</string>
+	<string name="texte_nv_jeu">nv_jeu_expr</string>
 	<string name="parametres">parametres</string>
 	<string name="suivant">suivant</string>
 	<string name="texte_choix">astuce_choix</string>
 	<string name="texte_total">astuce_total</string>
 	<string name="texte_aj_mot">texte_aj_mot</string>
-	<string name="texte_aj_def">texte_aj_def</string>
+	<string name="texte_aj_mot_type">texte_aj_mot_type</string>
+	<string name="texte_aj_mot_niv">texte_aj_mot_niv</string>
 	<string name="ajouter">ajouter</string>
+	<string name="texte_aj_def">texte_aj_def</string>
+	<string name="texte_aj_def_type">texte_aj_def_type</string>
 </resources>
