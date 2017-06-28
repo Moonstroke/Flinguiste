@@ -13,6 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.util.Locale;
+
+/**
+ * @author joH1
+ *
+ */
 public class JeuActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
 	private AssistantSQLite assistantSQLite;
@@ -165,7 +171,7 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 
 		mots[courant++] = mot;
 
-		Journal.verb(String.format("(%i/%i) %s", courant, total, mot));
+		Journal.verb(String.format(Locale.FRENCH, "(%d/%d) %s", courant, total, mot));
 	}
 
 	/**
@@ -195,4 +201,6 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 		else
 			initQuestion();
 	}
+
+
 }
