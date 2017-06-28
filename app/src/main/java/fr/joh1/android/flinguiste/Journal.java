@@ -9,8 +9,7 @@ import android.util.Log;
  * Ne nécessite plus le paramètre {@code tag}, parfois fastidieux à ajouter (et facilement oublié)
  *
  */
-
-public final class Journal {
+final class Journal {
 
 	private static final String ETIQ_LOG = "flinguiste";
 
