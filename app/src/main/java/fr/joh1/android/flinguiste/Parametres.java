@@ -2,8 +2,8 @@ package fr.joh1.android.flinguiste;
 
 /**
  * @author joH1
+ *
  */
-
 class Parametres {
 
 	/**
