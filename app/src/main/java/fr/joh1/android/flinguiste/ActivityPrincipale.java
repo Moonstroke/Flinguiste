@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -30,10 +31,9 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		super.onCreate(sauvegarde);
 
 		setContentView(R.layout.activity_principale);
-		getResources().getString(R.string.texte_choix_niv);
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
-		niveau = 0;
+		niveau = 0; // À la rigueur pas nécessaire, le onItemSelected() des spinners s'en charge tout seul
 	}
 
 	@Override
@@ -65,8 +65,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 
 	/**
 	 * Gère les clics sur les éléments de la barre d'action. Celle-ci gèrera automatiquement les
-	 * clics sur les boutons *Accueil* et *Précédent*, tant qu'on spécifie une activité parente dans
-	 * le manifeste.
+	 * clics sur les boutons *Accueil* et *Précédent*, tant qu'on spécifie pour ce dernier
+	 * une activité parente dans le manifeste.
 	 *
 	 * TODO : quelque chose d'intéressant peut-être...
 	 *
@@ -80,6 +80,9 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		switch(item.getItemId()) {
 			case R.id.reglages:
 				Journal.debg("Réglages");
+				return true;
+			case R.id.dump:
+				assistantSQLite.dump();
 				return true;
 			default:
 				return false;
@@ -105,7 +108,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 
 
 	/**
-	 * Gère les clics sur les {@code spinners} de choix de niveau.
+	 * Gère la sélection d'un élément des {@link android.widget.Spinner spinners} de choix de niveau.
 	 *
 	 * @param l  la vue contenant les éléments cliquables
 	 * @param v  la vue cliquée
@@ -114,18 +117,10 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 */
 	@Override
 	public void onItemSelected(AdapterView<?> l, View v, int i, long id) {
-		niveau = i + 1;
-		Toast.makeText(this, String.valueOf(niveau), Toast.LENGTH_SHORT).show();
+		niveau = i;
+		Toast.makeText(this, String.valueOf(((TextView)v).getText()), Toast.LENGTH_SHORT).show();
 	}
 
-
-	/**
-	 * Cette fonction fait rarement quelque chose d'intéressant, mais il faut l'implémenter
-	 *
-	 * Gère le fait de ne pas choisir un élément dans la liste, mais cliquer sur Précédent.
-	 *
-	 * @param l la vue contenant les éléments cliquables
-	 */
 	@Override
 	public void onNothingSelected(AdapterView<?> l) {
 		Toast.makeText(this, "Il faut choisir un niveau !", Toast.LENGTH_SHORT).show();
@@ -177,6 +172,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * @param v le bouton « Paramètres »
 	 */
 	public void param(View v) {
+
+		Journal.debg("Paramètres");
 		startActivity(new Intent(this, ParametresActivity.class));
 	}
 
