@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+											  android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_choix" android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="number"/>
+		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_choix"/>
+	</android.support.v7.widget.LinearLayoutCompat>
+
+	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_total" android:layout_width="8dp" android:layout_height="wrap_content" android:inputType="number"/>
+		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_total"/>
+	</android.support.v7.widget.LinearLayoutCompat>
+
+	<android.support.v7.widget.AppCompatTextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/texte_aj_mot"/>
+	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+		<Spinner android:id="@+id/s_aj_mot_niv" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"/>
+		<Spinner android:id="@+id/s_aj_mot_type" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"/>
+	</android.support.v7.widget.LinearLayoutCompat>
+	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_mot_mot" android:layout_width="8dp" android:layout_height="wrap_content"/>
+	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_mot_def" android:layout_width="8dp" android:layout_height="wrap_content"/>
+	<android.support.v7.widget.AppCompatButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ajouter" android:onClick="ajMot"/>
+
+	<android.support.v7.widget.AppCompatTextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/texte_aj_def"/>
+	<Spinner android:id="@+id/s_aj_def_type" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_def_def" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+	<android.support.v7.widget.AppCompatButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ajouter" android:onClick="ajDef"/>
+
+</android.support.v7.widget.LinearLayoutCompat>
