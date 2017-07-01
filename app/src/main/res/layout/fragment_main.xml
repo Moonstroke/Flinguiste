@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.android.support.v7.widget.LinearLayoutCompatCompat xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:context="fr.joh1.android.flinguiste.FragmentActivityPrincipale" tools:showIn="@layout/activity_principale" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:context="fr.joh1.android.flinguiste.FragmentActivityPrincipale" tools:showIn="@layout/activity_principale" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
 	<!-- xmlns:app="http://schemas.android.com/apk/res-auto" -->
 
 	<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:textSize="24dp" android:text="@string/titre_jeu_vocab"/>
 
 	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="32dp">
-		<android.support.v7.widget.AppCompatButton android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/nv_jeu_vocab" android:onClick="nvJeuVocab"/>
-		<Spinner android:id="@+id/s__niv_vocab" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="4"/>
+		<android.support.v7.widget.AppCompatButton android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/texte_nv_jeu" android:onClick="nvJeuVocab"/>
+		<Spinner android:id="@+id/s__niv_vocab" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="2"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
 	<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:textSize="24dp" android:text="@string/titre_jeu_expr"/>
 
 	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="32dp">
-		<Button android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/nv_jeu_vocab" android:onClick="nvJeuExpr"/>
-		<Spinner android:id="@+id/s__niv_expr" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="4"/>
+		<Button android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/texte_nv_jeu" android:onClick="nvJeuExpr"/>
+		<Spinner android:id="@+id/s__niv_expr" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="2"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
-	<Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/parametres"/>
+	<Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/parametres" android:onClick="param"/>
 
-</android.support.v7.widget.android.support.v7.widget.LinearLayoutCompatCompat>
+</android.support.v7.widget.LinearLayoutCompat>
