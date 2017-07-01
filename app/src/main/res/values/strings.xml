@@ -2,7 +2,8 @@
 	<string name="nom_appli">nom_appli</string>
 	<string name="jeu_acti">jeu_acti</string>
 	<string name="param_acti">param_acti</string>
-	<string name="action_reglages">action_reglages</string>
+	<string name="reglages">action_reglages</string>
+	<string name="dump_bd">dump_bd</string>
 	<string name="titre_jeu_vocab">titre_jeu_vocab</string>
 	<string name="titre_jeu_expr">titre_jeu_expr</string>
 	<string name="texte_choix_niv">texte_choix_niv</string>

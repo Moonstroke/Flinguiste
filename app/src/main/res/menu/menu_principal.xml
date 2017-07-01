@@ -1,3 +1,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" tools:context="fr.joh1.android.flinguiste.ActivityPrincipale">
-	<item android:id="@+id/reglages" android:orderInCategory="100" android:title="@string/action_reglages" app:showAsAction="never"/>
+	<item android:id="@+id/reglages" android:orderInCategory="100" android:title="@string/reglages" app:showAsAction="never"/>
+	<item android:id="@+id/dump_bd" android:orderInCategory="42" android:title="@string/dump_bd" app:showAsAction="never"/>
 </menu>
