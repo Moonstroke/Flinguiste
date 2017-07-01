@@ -311,7 +311,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	Cursor niveaux(String colNiveau, boolean inclureZero) {
 
 		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU)
-								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, COL_NIV, TABLE_NIVEAU);
+								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU, COL_NIV);
 		Journal.debg(sql);
 
 		return bd.rawQuery(sql, null);
@@ -325,8 +325,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	Cursor types(String colType, boolean inclureZero) {
 
-		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colType, TABLE_NIVEAU)
-								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colType, COL_NIV, TABLE_NIVEAU);
+		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE)
+								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE, COL_TYPE);
 
 		Journal.debg(sql);
 
