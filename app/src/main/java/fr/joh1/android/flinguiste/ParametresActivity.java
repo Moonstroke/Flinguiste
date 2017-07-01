@@ -77,17 +77,17 @@ public class ParametresActivity extends AppCompatActivity {
 		});
 
 		String colType = "type";
-		SimpleCursorAdapter adapteur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		adapteur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		adaptateur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		sAjMotType.setAdapter(adapteur);
+		sAjMotType.setAdapter(adaptateur);
 		sAjMotType.setPrompt(ctx.getResources().getString(R.string.texte_aj_mot_type));
-		adapteur.changeCursor(assistantSQLite.niveaux(colType, true));
-		sAjDefType.setAdapter(adapteur);
+		adaptateur.changeCursor(assistantSQLite.niveaux(colType, true));
+		sAjDefType.setAdapter(adaptateur);
 		sAjDefType.setPrompt(ctx.getResources().getString(R.string.texte_aj_def_type));
 		String colNiv = "niveau";
-		adapteur.changeCursorAndColumns(assistantSQLite.niveaux(colNiv, false), new String[] {colNiv}, new int[] {1});
-		sAjMotNiv.setAdapter(adapteur);
+		adaptateur.changeCursorAndColumns(assistantSQLite.niveaux(colNiv, false), new String[] {colNiv}, new int[] {1});
+		sAjMotNiv.setAdapter(adaptateur);
 		sAjMotNiv.setPrompt(ctx.getResources().getString(R.string.texte_aj_mot_niv));
 
 	}
