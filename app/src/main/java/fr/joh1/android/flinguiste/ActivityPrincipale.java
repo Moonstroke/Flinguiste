@@ -81,7 +81,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 			case R.id.reglages:
 				Journal.debg("Réglages");
 				return true;
-			case R.id.dump:
+			case R.id.dump_bd:
 				assistantSQLite.dump();
 				return true;
 			default:
