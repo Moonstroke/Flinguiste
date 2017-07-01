@@ -56,6 +56,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private static final int MOYEN = 2;
 	private static final int DIFFICILE = 3;
 
+	private Locale ASCII = Locale.US;
 
 	static final class BaseEpuiseeException extends Exception {}
 
@@ -106,12 +107,12 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private void creerTables() {
 
 		String sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL)";
-		bd.execSQL(String.format(Locale.US, sql, TABLE_TYPE, COL_ID_TYPE, COL_TYPE));
-		bd.execSQL(String.format(Locale.US, sql, TABLE_NIVEAU, COL_ID_NIV, COL_NIV));
+		bd.execSQL(String.format(ASCII, sql, TABLE_TYPE, COL_ID_TYPE, COL_TYPE));
+		bd.execSQL(String.format(ASCII, sql, TABLE_NIVEAU, COL_ID_NIV, COL_NIV));
 
-		sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s INTEGER NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s))";
-		bd.execSQL(String.format(Locale.US, sql, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, COL_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV));
-		bd.execSQL(String.format(Locale.US, sql, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, COL_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT));
+		sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL, %s INTEGER %s NULL, %s INTEGER NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s))";
+		bd.execSQL(String.format(ASCII, sql, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
+		bd.execSQL(String.format(ASCII, sql, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, "DEFAULT", COL_ID_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
 	}
 
 
@@ -185,7 +186,11 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	}
 
 	public int ajouterDefinition(String definition) {
-		return ajouterDefinition(definition, -1);
+		ContentValues ligne = new ContentValues();
+		ligne.put(COL_DEF, definition);
+		ligne.putNull(COL_ID_MOT);
+
+		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
 	}
 
 
@@ -305,9 +310,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	Cursor niveaux(String colNiveau, boolean inclureZero) {
 
-		String sql = inclureZero ? String.format(Locale.US, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU):
-								   String.format(Locale.US, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s != 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, COL_NIV, TABLE_NIVEAU);
-
+		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU)
+								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, COL_NIV, TABLE_NIVEAU);
 		Journal.debg(sql);
 
 		return bd.rawQuery(sql, null);
@@ -321,8 +325,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	Cursor types(String colType, boolean inclureZero) {
 
-		String sql = inclureZero ? String.format(Locale.US, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colType, TABLE_NIVEAU):
-				String.format(Locale.US, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s != 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colType, COL_NIV, TABLE_NIVEAU);
+		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colType, TABLE_NIVEAU)
+								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colType, COL_NIV, TABLE_NIVEAU);
 
 		Journal.debg(sql);
 
@@ -342,7 +346,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return eh bien : le mot !
 	 */
 	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
-		String sql = String.format(Locale.US, "SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, sqlListe(mots));
+		String sql = String.format(ASCII, "SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, sqlListe(mots));
 		Journal.debg(sql);
 		Cursor c = bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_MOT);
@@ -376,7 +380,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
-		String sql = String.format(Locale.US, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = %s AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, COL_MOT, COL_ID_TYPE);
+		String sql = String.format(ASCII, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = %s AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, COL_MOT, COL_ID_TYPE);
 
 		// sélection de la bonne réponse
 		Cursor c = bd.rawQuery(sql, null);
@@ -386,8 +390,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		c.close();
 
 		// mauvaises réponses en ordre aléatoire
-		c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
-		//Cursor c = bd.rawQuery("select distinct " + COL_DEFINITION + " from " + TABLE_MOT + " natural join " + TABLE_DEFINITION + " where " + COL_MOT + " != '" + mot + "' order by RANDOM() limit 3", null);
+		sql = String.format(ASCII, "SELECT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, nb - 1);
+		//c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
+		c = bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_DEF);
 		c.moveToFirst();
 		do {
@@ -423,4 +428,29 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	}
 
 
+	public void dump() {
+
+		Journal.debg(bd.getPath());
+		Cursor c;
+		StringBuilder sb;
+		for(String t : new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_NIVEAU, TABLE_TYPE}) {
+
+			c = bd.rawQuery("SELECT * FROM " + t, null);
+			int n = c.getColumnCount();
+
+			sb = new StringBuilder(t);
+			for(int i = 0; i < n; ++i)
+				sb.append(" | " + c.getColumnName(i));
+			Journal.debg(sb.toString());
+
+			while(c.moveToNext()) {
+				sb = new StringBuilder(t);
+				for(int i = 0; i < n; ++i)
+					sb.append(" | " + c.getString(i));
+				Journal.debg(sb.toString());
+			}
+
+			c.close();
+		}
+	}
 }
