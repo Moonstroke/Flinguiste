@@ -39,7 +39,7 @@ public class ParametresActivity extends AppCompatActivity {
 		Context ctx = getApplicationContext();
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_jeu);
+		setContentView(R.layout.activity_parametres);
 
 		assistantSQLite = new AssistantSQLite(ctx, false);
 
