@@ -1,6 +1,5 @@
 package fr.joh1.android.flinguiste;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.app.Fragment;
@@ -61,15 +60,19 @@ public class FragmentActivityPrincipale extends Fragment {
 
 		String colNiv = "niveau";
 		Cursor c = assistantSQLite.niveaux(colNiv, true);
-		SimpleCursorAdapter adapteur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_item, c, new String[] {colNiv}, new int[] {1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		adapteur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		s_nivVocab.setAdapter(adapteur);
-		s_nivExpr.setAdapter(adapteur);
+		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_item, c, new String[] {colNiv}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		adaptateur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		s_nivVocab.setAdapter(adaptateur);
+		s_nivExpr.setAdapter(adaptateur);
+
+		ActivityPrincipale acti = (ActivityPrincipale)getActivity();
+		s_nivVocab.setOnItemSelectedListener(acti);
+
+		s_nivExpr.setOnItemSelectedListener(acti);
 
 		String texteChoixNiv = ctx.getResources().getString(R.string.texte_choix_niv);
 		s_nivVocab.setPrompt(texteChoixNiv);
 		s_nivExpr.setPrompt(texteChoixNiv);
 	}
-
 
 }
