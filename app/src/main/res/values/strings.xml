@@ -7,7 +7,7 @@
 	<string name="titre_jeu_vocab">titre_jeu_vocab</string>
 	<string name="titre_jeu_expr">titre_jeu_expr</string>
 	<string name="texte_choix_niv">texte_choix_niv</string>
-	<string name="texte_nv_jeu">nv_jeu_expr</string>
+	<string name="texte_nv_jeu">texte_nv_jeu</string>
 	<string name="parametres">parametres</string>
 	<string name="suivant">suivant</string>
 	<string name="texte_choix">astuce_choix</string>
