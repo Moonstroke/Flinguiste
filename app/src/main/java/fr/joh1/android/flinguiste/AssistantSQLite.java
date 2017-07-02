@@ -155,11 +155,12 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		ContentValues ligne = new ContentValues();
 		ligne.put(COL_MOT, mot);
 		ligne.put(COL_ID_NIV, niveau);
-		ligne.put(COL_TYPE, String.valueOf(type));
+		ligne.put(COL_ID_TYPE, String.valueOf(type));
 
 		int id = (int)bd.insert(TABLE_MOT, null, ligne);
 		ligne = new ContentValues();
 		ligne.put(COL_DEF, definition);
+		ligne.put(COL_ID_TYPE, type);
 		ligne.put(COL_ID_MOT, id);
 
 		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
@@ -380,7 +381,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
-		String sql = String.format(ASCII, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = %s AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, COL_MOT, COL_ID_TYPE);
+		String sql = String.format(ASCII, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, COL_MOT, COL_ID_TYPE);
 
 		// sélection de la bonne réponse
 		Cursor c = bd.rawQuery(sql, null);

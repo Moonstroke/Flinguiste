@@ -10,7 +10,7 @@
 
 	<!-- Paramétrage du nombre de propositions par question -->
 	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_total" android:layout_width="8dp" android:layout_height="wrap_content" android:inputType="number"/>
+		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_total" android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="number"/>
 		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_total"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
