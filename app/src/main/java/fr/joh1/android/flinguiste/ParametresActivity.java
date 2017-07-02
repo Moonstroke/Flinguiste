@@ -54,13 +54,22 @@ public class ParametresActivity extends AppCompatActivity {
 		sAjDefType = (Spinner)findViewById(R.id.s_aj_def_type);
 		etAjDefDef = (AppCompatEditText)findViewById(R.id.et_aj_def_def);
 
+
+		etChoix.setText(String.valueOf(Parametres.choix));
+		etTotal.setText(String.valueOf(Parametres.total));
+
 		etChoix.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
+
 				if(!hasFocus) {
-					int choix = Integer.parseInt(String.valueOf(((EditText)v).getText()));
-					if(choix != Parametres.choix)
-						Parametres.choix = choix;
+					EditText et = (EditText)v;
+					String s = String.valueOf(et.getText());
+					if(s.length() != 0) {
+						int choix = Integer.parseInt(s);
+						if(choix != Parametres.choix) Parametres.choix = choix;
+					}
+					else et.setText(String.valueOf(Parametres.choix));
 				}
 			}
 		});
@@ -68,16 +77,21 @@ public class ParametresActivity extends AppCompatActivity {
 		etTotal.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
+
 				if(!hasFocus) {
-					int total = Integer.parseInt(String.valueOf(((EditText)v).getText()));
-					if(total != Parametres.total)
-						Parametres.total = total;
+					EditText et = (EditText)v;
+					String s = String.valueOf(et.getText());
+					if(s.length() != 0) {
+						int total = Integer.parseInt(s);
+						if(total != Parametres.total) Parametres.total = total;
+					}
+					else et.setText(String.valueOf(Parametres.total));
 				}
 			}
 		});
 
 		String colType = "type";
-		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		adaptateur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 		sAjMotType.setAdapter(adaptateur);
@@ -94,19 +108,21 @@ public class ParametresActivity extends AppCompatActivity {
 
 
 	public void ajMot(View v) {
+
 		String mot = String.valueOf(etAjMotMot.getText());
 		int niveau = sAjMotNiv.getSelectedItemPosition() + 1;
 		int type = sAjMotType.getSelectedItemPosition() + 1;
 		String def = String.valueOf(etAjMotDef.getText());
-		if(mot.length() * def.length() != 0)
-			assistantSQLite.ajouterMot(mot, niveau, type, def);
+
+		if(mot.length() * def.length() != 0) assistantSQLite.ajouterMot(mot, niveau, type, def);
 	}
 
 	public void ajDef(View v) {
+
 		int type = sAjDefType.getSelectedItemPosition() + 1;
 		String def = String.valueOf(etAjDefDef.getText());
-		if(def.length() != 0)
-			assistantSQLite.ajouterDefinition(def, type);
+
+		if(def.length() != 0) assistantSQLite.ajouterDefinition(def, type);
 	}
 
 
