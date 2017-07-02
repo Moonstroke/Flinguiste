@@ -2,7 +2,7 @@ package fr.joh1.android.flinguiste;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -305,33 +305,33 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Renvoie un {@code {@link Cursor}} sur les niveaux de jeu à associer à un {@link android.widget.Spinner}
+	 * Renvoie un {@link SQLiteCursor} sur les niveaux de jeu à associer à un {@link android.widget.Spinner}
 	 *
 	 * @return ce curseur
 	 */
-	Cursor niveaux(String colNiveau, boolean inclureZero) {
+	SQLiteCursor niveaux(String colNiveau, boolean inclureZero) {
 
 		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU)
 								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU, COL_NIV);
 		Journal.debg(sql);
 
-		return bd.rawQuery(sql, null);
+		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
 
 
 	/**
-	 * Renvoie un {@code {@link Cursor}} sur les types de mot à associer à un {@link android.widget.Spinner}
+	 * Renvoie un {@link SQLiteCursor} sur les types de mot à associer à un {@link android.widget.Spinner}
 	 *
 	 * @return ce fameux curseur !
 	 */
-	Cursor types(String colType, boolean inclureZero) {
+	SQLiteCursor types(String colType, boolean inclureZero) {
 
 		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE)
 								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE, COL_TYPE);
 
 		Journal.debg(sql);
 
-		return bd.rawQuery(sql, null);
+		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
 
 
@@ -349,7 +349,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
 		String sql = String.format(ASCII, "SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, sqlListe(mots));
 		Journal.debg(sql);
-		Cursor c = bd.rawQuery(sql, null);
+		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_MOT);
 		c.moveToFirst();
 		String mot;
@@ -381,19 +381,19 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
-		String sql = String.format(ASCII, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, COL_MOT, COL_ID_TYPE);
+		String sql = String.format(ASCII, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, TABLE_MOT, COL_ID_TYPE);
 
 		// sélection de la bonne réponse
-		Cursor c = bd.rawQuery(sql, null);
+		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		c.moveToFirst();
 		String bonneReponse = c.getString(c.getColumnIndexOrThrow(COL_DEF));
 		int idBonneRep = c.getInt(c.getColumnIndexOrThrow(COL_ID_DEF));
 		c.close();
 
 		// mauvaises réponses en ordre aléatoire
-		sql = String.format(ASCII, "SELECT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, nb - 1);
+		sql = String.format(ASCII, "SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, nb - 1);
 		//c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
-		c = bd.rawQuery(sql, null);
+		c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_DEF);
 		c.moveToFirst();
 		do {
@@ -432,11 +432,11 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	public void dump() {
 
 		Journal.debg(bd.getPath());
-		Cursor c;
+		SQLiteCursor c;
 		StringBuilder sb;
 		for(String t : new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_NIVEAU, TABLE_TYPE}) {
 
-			c = bd.rawQuery("SELECT * FROM " + t, null);
+			c = (SQLiteCursor)bd.rawQuery("SELECT * FROM " + t, null);
 			int n = c.getColumnCount();
 
 			sb = new StringBuilder(t);

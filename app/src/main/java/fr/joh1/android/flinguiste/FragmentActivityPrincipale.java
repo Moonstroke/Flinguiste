@@ -1,7 +1,7 @@
 package fr.joh1.android.flinguiste;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -59,7 +59,7 @@ public class FragmentActivityPrincipale extends Fragment {
 		s_nivExpr = (Spinner)vue.findViewById(R.id.s__niv_expr);
 
 		String colNiv = "niveau";
-		Cursor c = assistantSQLite.niveaux(colNiv, true);
+		SQLiteCursor c = assistantSQLite.niveaux(colNiv, true);
 		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_item, c, new String[] {colNiv}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		adaptateur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		s_nivVocab.setAdapter(adaptateur);
