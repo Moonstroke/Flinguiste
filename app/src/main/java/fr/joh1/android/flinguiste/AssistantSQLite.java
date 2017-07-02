@@ -395,10 +395,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		//c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
 		c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_DEF);
-		c.moveToFirst();
-		do {
+
+		while(c.moveToNext()) {
 			definitions.add(new Reponse(false, c.getString(col)));
-		} while(c.moveToNext());
+		}
 		c.close();
 
 		// bonne réponse ajoutée aléatoirement dans l'ArrayList
