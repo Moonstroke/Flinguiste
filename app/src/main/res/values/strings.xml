@@ -13,9 +13,11 @@
 	<string name="texte_choix">astuce_choix</string>
 	<string name="texte_total">astuce_total</string>
 	<string name="texte_aj_mot">texte_aj_mot</string>
+	<string name="astuce_aj_mot">astuce_aj_mot</string>
 	<string name="texte_aj_mot_type">texte_aj_mot_type</string>
 	<string name="texte_aj_mot_niv">texte_aj_mot_niv</string>
 	<string name="ajouter">ajouter</string>
 	<string name="texte_aj_def">texte_aj_def</string>
+	<string name="astuce_aj_def">astuce_aj_def</string>
 	<string name="texte_aj_def_type">texte_aj_def_type</string>
 </resources>

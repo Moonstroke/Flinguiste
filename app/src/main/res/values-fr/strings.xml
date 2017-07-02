@@ -13,9 +13,11 @@
 	<string name="texte_choix">Propositions par question</string>
 	<string name="texte_total">Questions par partie</string>
 	<string name="texte_aj_mot">Ajouter un mot</string>
+	<string name="astuce_aj_mot">Entrer ici le mot à ajouter</string>
 	<string name="texte_aj_mot_type">Choisir un type de mot</string>
 	<string name="texte_aj_mot_niv">Choisir un niveau pour le mot</string>
-	<string name="texte_aj_def_type">Choisir un type pour la définition</string>
-	<string name="texte_aj_def">Ajouter une définition</string>
 	<string name="ajouter">Ajouter</string>
+	<string name="texte_aj_def">Ajouter une définition</string>
+	<string name="astuce_aj_def">Entrer ici la définition</string>
+	<string name="texte_aj_def_type">Choisir un type pour la définition</string>
 </resources>
