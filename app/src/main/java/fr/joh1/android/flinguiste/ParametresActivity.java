@@ -96,15 +96,17 @@ public class ParametresActivity extends AppCompatActivity {
 	public void ajMot(View v) {
 		String mot = String.valueOf(etAjMotMot.getText());
 		int niveau = sAjMotNiv.getSelectedItemPosition() + 1;
-		int type = sAjMotType.getSelectedItemPosition();
+		int type = sAjMotType.getSelectedItemPosition() + 1;
 		String def = String.valueOf(etAjMotDef.getText());
-		assistantSQLite.ajouterMot(mot, niveau, type, def);
+		if(mot.length() * def.length() != 0)
+			assistantSQLite.ajouterMot(mot, niveau, type, def);
 	}
 
 	public void ajDef(View v) {
-		int type = sAjDefType.getSelectedItemPosition();
+		int type = sAjDefType.getSelectedItemPosition() + 1;
 		String def = String.valueOf(etAjDefDef.getText());
-		assistantSQLite.ajouterDefinition(def, type);
+		if(def.length() != 0)
+			assistantSQLite.ajouterDefinition(def, type);
 	}
 
 
