@@ -423,7 +423,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		StringBuilder res = new StringBuilder(s * 12); // On s'octroie 10 caractères par mot, en gros
 		res.append("('").append(liste[0]).append("'");
 		for(int i = 1; i < s; ++i)
-			res.append(", '").append(liste[i]).append("'");
+			if(liste[i] != null) res.append(", '").append(liste[i]).append("'");
 		res.append(")");
 		return res.toString();
 	}
