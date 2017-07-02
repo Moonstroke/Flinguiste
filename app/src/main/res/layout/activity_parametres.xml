@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-											  android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                                              android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/marge2">
 
 	<!-- Paramétrage du nombre de questions par partie -->
 	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
 		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_choix" android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="number"/>
-		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_choix"/>
+		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_choix" android:textSize="@dimen/texte"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
 	<!-- Paramétrage du nombre de propositions par question -->
 	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
 		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_total" android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="number"/>
-		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_total"/>
+		<android.support.v7.widget.AppCompatTextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/texte_total" android:textSize="@dimen/texte"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
 	<!-- Ajout d'un mot dans la base de données -->
-	<android.support.v7.widget.AppCompatTextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/texte_aj_mot"/>
+	<android.support.v7.widget.AppCompatTextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/marge4" android:text="@string/texte_aj_mot" android:textSize="@dimen/titre" android:textAlignment="center"/>
 	<android.support.v7.widget.LinearLayoutCompat android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
 		<Spinner android:id="@+id/s_aj_mot_niv" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"/>
 		<Spinner android:id="@+id/s_aj_mot_type" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"/>
@@ -25,7 +25,7 @@
 	<android.support.v7.widget.AppCompatButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ajouter" android:onClick="ajMot"/>
 
 	<!-- Ajout d'une définition -->
-	<android.support.v7.widget.AppCompatTextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/texte_aj_def"/>
+	<android.support.v7.widget.AppCompatTextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/marge4" android:text="@string/texte_aj_def" android:textSize="@dimen/titre" android:textAlignment="center"/>
 	<Spinner android:id="@+id/s_aj_def_type" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_def_def" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/astuce_aj_def"/>
 	<android.support.v7.widget.AppCompatButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ajouter" android:onClick="ajDef"/>
