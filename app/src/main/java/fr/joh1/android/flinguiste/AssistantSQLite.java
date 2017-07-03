@@ -347,7 +347,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return eh bien : le mot !
 	 */
 	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
-		String sql = String.format(ASCII, "SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, sqlListe(mots));
+		String sql = String.format(ASCII, "SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots));
 		Journal.debg(sql);
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_MOT);
@@ -416,13 +416,15 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return une chaîne de {@code SQL} (valide)
 	 */
 	@NonNull
-	private String sqlListe(String[] liste) {
-		int s;
-		if((s = liste.length) == 0)
-			return "()";
-		StringBuilder res = new StringBuilder(s * 12); // On s'octroie 10 caractères par mot, en gros
-		res.append("('").append(liste[0]).append("'");
-		for(int i = 1; i < s; ++i)
+	private String listeSQL(String[] liste) {
+
+		int l = liste.length;
+		if(l == 0 || liste[0] == null) return "()";
+
+		// On s'octroie 10 caractères par mot, en gros
+		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste[0]).append("'");
+
+		for(int i = 1; i < l; ++i)
 			if(liste[i] != null) res.append(", '").append(liste[i]).append("'");
 		res.append(")");
 		return res.toString();
