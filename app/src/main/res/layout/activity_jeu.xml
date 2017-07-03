@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
                                               xmlns:tools="http://schemas.android.com/tools" tools:context="fr.joh1.android.flinguiste.JeuActivity"
-                                              android:layout_width="match_parent" android:layout_height="match_parent" android:padding="@dimen/marge2">
+                                              style="@style/fenetre_telephone">
 
-	<android.support.v7.widget.AppCompatTextView android:id="@+id/tv_mot" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/marge4" android:textSize="@dimen/titre"/>
-	<android.support.v7.widget.ListViewCompat android:id="@+id/lv_reponses" android:layout_width="match_parent" android:layout_height="wrap_content" android:clickable="true"/>
-	<android.support.v7.widget.AppCompatButton android:id="@+id/bt_suivant" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="bottom" android:text="@string/suivant" android:onClick="suivant"/>
+	<android.support.v7.widget.AppCompatTextView android:id="@+id/tv_mot" style="@style/titre"/>
+	<android.support.v7.widget.ListViewCompat android:id="@+id/lv_reponses" style="@style/ligne" android:clickable="true"/>
+	<android.support.v7.widget.AppCompatButton android:id="@+id/bt_suivant" style="@style/ligne" android:gravity="bottom" android:text="@string/suivant" android:onClick="suivant"/>
 
 </android.support.v7.widget.LinearLayoutCompat>

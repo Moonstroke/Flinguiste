@@ -1,5 +1,46 @@
 <resources>
 
+	<style name="mot">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginLeft">@dimen/marge1</item>
+	</style>
+
+	<style name="ligne">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_weight">1</item>
+	</style>
+
+	<style name="fenetre_telephone">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:padding">@dimen/marge2</item>
+		<item name="android:scrollbarSize">@dimen/marge1</item>
+		<item name="android:scrollbarThumbVertical">@color/colorPrimaryDark</item>
+		<item name="android:scrollbars">vertical</item>
+		<item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
+		<item name="android:verticalScrollbarPosition">right</item>
+	</style>
+
+	<style name="section" parent="ligne">
+		<item name="android:orientation">horizontal</item>
+		<item name="android:layout_marginBottom">@dimen/marge4</item>
+	</style>
+
+	<style name="titre" parent="ligne">
+		<item name="android:layout_marginBottom">@dimen/marge1</item>
+		<item name="android:textAlignment">center</item>
+		<item name="android:textSize">@dimen/titre</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="texte" parent="ligne">
+		<item name="android:textSize">@dimen/texte</item>
+	</style>
+
+
 	<!-- Base application theme. -->
 	<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 		<!-- Customize your theme here. -->
