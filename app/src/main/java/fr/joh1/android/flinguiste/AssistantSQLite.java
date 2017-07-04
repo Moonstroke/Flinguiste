@@ -431,7 +431,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	}
 
 
-	public void dump() {
+	public void deverser() {
 
 		Journal.debg(bd.getPath());
 		SQLiteCursor c;

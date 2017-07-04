@@ -3,7 +3,7 @@
 	<string name="jeu_acti">Partie en cours</string>
 	<string name="param_acti">Paramètres</string>
 	<string name="reglages">Réglages</string>
-	<string name="dump_bd">Dump BD</string>
+	<string name="deverser_bd">Déverser la BD dans le journal</string>
 	<string name="titre_jeu_vocab">Questionnaire de vocabulaire</string>
 	<string name="titre_jeu_expr">Questionnaire d\'expressions</string>
 	<string name="texte_choix_niv">Choisir un niveau</string>
