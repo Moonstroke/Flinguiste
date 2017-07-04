@@ -19,7 +19,7 @@ import java.util.Locale;
  * @author joH1
  *
  */
-public class JeuActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class JeuActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 	private AssistantSQLite assistantSQLite;
 
@@ -84,16 +84,16 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 		niveau = donnees.getInt("n");
 		total = donnees.getInt("t");
 		choix = donnees.getInt("c");
+
 		mots = new String[total];
-		courant = 1;
+		courant = 0;
 		score = 0;
 
 		tvMot = (AppCompatTextView)findViewById(R.id.tv_mot);
 		lvReponses = (ListViewCompat)findViewById(R.id.lv_reponses);
 		btSuivant = (AppCompatButton)findViewById(R.id.bt_suivant);
 
-		lvReponses.setOnItemSelectedListener(this);
-		btSuivant.setEnabled(false);
+		lvReponses.setOnItemClickListener(this);
 
 		initQuestion();
 	}
@@ -114,14 +114,13 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 	 * en vert, sinon la colore en rouge.
 	 * Dans tous les cas, désactive la gestion des clics sur la liste, et l'active sur le bouton SUIVANT.
 	 *
-	 * @param l  la liste des propositions
-	 * @param v  la vue sélectionnée (cliquée)
-	 * @param i  la position de la vue dans la liste (à partir de 0)
-	 * @param id l'identifiant de la vue
+	 * @param l la liste des propositions
+	 * @param v la vue sélectionnée (cliquée)
+	 * @param i la position de la vue dans la liste (à partir de 0)
+	 * @param _ l'identifiant de la vue
 	 */
 	@Override
-	public void onItemSelected(AdapterView<?> l, View v, int i, long id) {
-
+	public void onItemClick(AdapterView<?> l, View v, int i, long _) {
 		Reponse rep = (Reponse)l.getItemAtPosition(i);
 		boolean gagne = rep.estBonne();
 
@@ -135,16 +134,6 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 	}
 
 	/**
-	 * Est censée gérer le cas où on ne sélectionne aucun élément de la liste, mais dans notre cas,
-	 * cela rendrait compliqué l'avancement de la partie.
-	 *
-	 * @param l inutilisé
-	 */
-	@Override
-	public void onNothingSelected(AdapterView<?> l) {}
-
-
-	/**
 	 * Initialise la question suivante.
 	 * Sélectionne un mot, le place dans sa zone de texte, récupère des propositions et les place de même
 	 * Gère également le cas où la base de données a été épuisée de ses mots du niveau donné
@@ -154,7 +143,7 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 		String mot;
 		try {
 			mot = assistantSQLite.motAleat(niveau, mots);
-
+			mots[courant++] = mot;
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();
@@ -162,14 +151,13 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 			return;
 		}
 
+		// TODO trouver un moyen de ne mettre à jour QUE le contenu de la liste et non tout l'adapteur
 		lvReponses.setAdapter(new ArrayAdapter<Reponse>(this, android.R.layout.simple_list_item_1,
 														assistantSQLite.propositions(mot, choix)));
 
-
+		tvMot.setText(mot);
 		btSuivant.setEnabled(false);
 		lvReponses.setEnabled(true);
-
-		mots[courant++] = mot;
 
 		Journal.verb(String.format(Locale.FRENCH, "(%d/%d) %s", courant, total, mot));
 	}
@@ -201,6 +189,5 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 		else
 			initQuestion();
 	}
-
 
 }
