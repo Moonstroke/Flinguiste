@@ -10,8 +10,6 @@ import android.support.annotation.NonNull;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Random;
 
 /**
  * @author joH1
@@ -56,7 +54,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private static final int MOYEN = 2;
 	private static final int DIFFICILE = 3;
 
-	private Locale ASCII = Locale.US;
 
 	static final class BaseEpuiseeException extends Exception {}
 
@@ -107,12 +104,12 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private void creerTables() {
 
 		String sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL)";
-		bd.execSQL(String.format(ASCII, sql, TABLE_TYPE, COL_ID_TYPE, COL_TYPE));
-		bd.execSQL(String.format(ASCII, sql, TABLE_NIVEAU, COL_ID_NIV, COL_NIV));
+		bd.execSQL(fprintf(sql, TABLE_TYPE, COL_ID_TYPE, COL_TYPE));
+		bd.execSQL(fprintf(sql, TABLE_NIVEAU, COL_ID_NIV, COL_NIV));
 
 		sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL, %s INTEGER %s NULL, %s INTEGER NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s))";
-		bd.execSQL(String.format(ASCII, sql, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
-		bd.execSQL(String.format(ASCII, sql, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, "DEFAULT", COL_ID_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
+		bd.execSQL(fprintf(sql, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
+		bd.execSQL(fprintf(sql, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, "DEFAULT", COL_ID_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
 	}
 
 
@@ -311,9 +308,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	SQLiteCursor niveaux(String colNiveau, boolean inclureZero) {
 
-		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU)
-								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU, COL_NIV);
-		Journal.debg(sql);
+		String sql = inclureZero ? fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU)
+								 : fprintf("SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU, COL_NIV);
+		Journal.debg("requête niveaux : " + sql);
 
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
@@ -326,10 +323,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	SQLiteCursor types(String colType, boolean inclureZero) {
 
-		String sql = inclureZero ? String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE)
-								 : String.format(ASCII, "SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE, COL_TYPE);
+		String sql = inclureZero ? fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE)
+								 : fprintf("SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE, COL_TYPE);
 
-		Journal.debg(sql);
+		Journal.debg("requête types : " + sql);
 
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
@@ -347,8 +344,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return eh bien : le mot !
 	 */
 	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
-		String sql = String.format(ASCII, "SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots));
-		Journal.debg(sql);
+		String sql = fprintf("SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots));
+		Journal.debg("requête mot : " + sql);
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_MOT);
 		c.moveToFirst();
@@ -381,9 +378,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
-		String sql = String.format(ASCII, "SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, TABLE_MOT, COL_ID_TYPE);
-
 		// sélection de la bonne réponse
+		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, TABLE_MOT, COL_ID_TYPE);
+		Journal.debg("requête bonne réponse : " + sql);
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		c.moveToFirst();
 		String bonneReponse = c.getString(c.getColumnIndexOrThrow(COL_DEF));
@@ -391,8 +388,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		c.close();
 
 		// mauvaises réponses en ordre aléatoire
-		sql = String.format(ASCII, "SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, nb - 1);
+		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, nb - 1);
 		//c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
+		Journal.debg(sql);
 		c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_DEF);
 
@@ -402,7 +400,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		c.close();
 
 		// bonne réponse ajoutée aléatoirement dans l'ArrayList
-		definitions.add(new Random().nextInt(nb), new Reponse(true, bonneReponse));
+		definitions.add(new java.util.Random().nextInt(nb), new Reponse(true, bonneReponse));
 
 		return definitions;
 	}
@@ -455,5 +453,23 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 			c.close();
 		}
+	}
+
+	/**
+	 * Une surcharge de {@link String#format(java.util.Locale, String, Object...)} parce que devoir passer
+	 * la {@link java.util.Locale} en paramètre, c'est soûlant, et que le C, c'est bien !
+	 *
+	 * Pour plus d'infos sur le format, voir la doc
+	 *
+	 *  {@code Locale.US} correspond à l'ASCII, l'encodage idoine pour du SQL (les seuls cas actuels
+	 * d'utilisation de cette fonction)
+	 *
+	 * @param s    la chaîne à formater
+	 * @param args les arguments à intégrer dans la chaîne
+	 *
+	 * @return la chaîne de caractères entrée formatée avec les arguments
+	 */
+	private static String fprintf(String s, Object... args) {
+		return new java.util.Formatter(java.util.Locale.US).format(s, args).toString();
 	}
 }
