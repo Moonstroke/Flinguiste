@@ -68,8 +68,6 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * clics sur les boutons *Accueil* et *Précédent*, tant qu'on spécifie pour ce dernier
 	 * une activité parente dans le manifeste.
 	 *
-	 * TODO : quelque chose d'intéressant peut-être...
-	 *
 	 * @param item l'élément cliqué
 	 *
 	 * @return vrai si {@code item } est l'élément "Réglages"

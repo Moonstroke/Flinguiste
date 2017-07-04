@@ -75,8 +75,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	/**
 	 * Instancie l'utilitaire et lui donne un accès à la base de données sur laquelle interagir.
 	 *
-	 * TODO comprendre *quand* cette méthode est appelée : Par le constructeur ?
-	 *
 	 * @param base la base de données à passer en attribut
 	 */
 	@Override
@@ -90,7 +88,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	/**
 	 * Théoriquement sert à mettre la base à jour, mais en l'occurence ne fait rien.
 	 *
-	 * @param base        la base de données TODO vérifier si peut être différent de l'attribut
+	 * @param base        la base de données
 	 * @param versionPrec la version de la base avant mise à jour
 	 * @param versionNouv la version de la base après mise à jour
 	 */
@@ -212,7 +210,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Ajoute un niveau.
+	 * Ajoute un type.
 	 *
 	 * TODO comme pour {@code #ajouterNiveau}, voir si à déprécier ou non
 	 *
@@ -336,8 +334,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * Renvoie un mot choisi aléatoirement mais de niveau déterminé, et ne faisant pas partie
 	 * d'une liste de mots (les mots déja rencontrés en jeu)
 	 *
-	 * TODO optimiser ? Un tableau de {@code String}, c'est gourmand, non ? (sans doute moins qu'une AL mais bon)
-	 *
 	 * @param niveau le niveau du mot à renvoyer
 	 * @param mots   les mots déja vus (et donc à ne pas renvoyer !)
 	 *
@@ -364,8 +360,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Renvoie  une liste de longueur donnée de {@link Reponse Reponses} parmi lesquelles une (TODO et une seule)
-	 * correspond au mot indiqué.
+	 * Renvoie  une liste de longueur donnée de {@link Reponse Reponses} parmi lesquelles une
+	 * (et une seule) correspond au mot indiqué.
 	 *
 	 * Conçue pour être appelée après {@code motAleat}, avec le mot que cette méthode a retourné.
 	 *
