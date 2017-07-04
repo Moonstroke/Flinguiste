@@ -9,6 +9,9 @@
 	<style name="ligne">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="ligne2" parent="ligne">
 		<item name="android:layout_weight">1</item>
 	</style>
 
@@ -36,7 +39,7 @@
 		<item name="android:textStyle">bold</item>
 	</style>
 
-	<style name="texte" parent="ligne">
+	<style name="texte" parent="ligne2">
 		<item name="android:textSize">@dimen/texte</item>
 	</style>
 

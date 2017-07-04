@@ -4,7 +4,9 @@
                                               style="@style/fenetre_telephone">
 
 	<android.support.v7.widget.AppCompatTextView android:id="@+id/tv_mot" style="@style/titre"/>
-	<android.support.v7.widget.ListViewCompat android:id="@+id/lv_reponses" style="@style/ligne" android:clickable="true"/>
-	<android.support.v7.widget.AppCompatButton android:id="@+id/bt_suivant" style="@style/ligne" android:gravity="bottom" android:text="@string/suivant" android:onClick="suivant"/>
+
+	<android.support.v7.widget.ListViewCompat android:id="@+id/lv_reponses" style="@style/ligne2" android:clickable="true"/>
+
+	<android.support.v7.widget.AppCompatButton android:id="@+id/bt_suivant" style="@style/ligne" android:layout_gravity="bottom" android:text="@string/suivant" android:onClick="suivant"/>
 
 </android.support.v7.widget.LinearLayoutCompat>
