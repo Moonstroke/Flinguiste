@@ -65,7 +65,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Enveloppe pour la méthode {@code {@link android.database.sqlite.SQLiteDatabase#close() close}}
+	 * Enveloppe pour la méthode {@code {@link android.database.sqlite.SQLiteClosable#close() close}}
 	 */
 	public void fermer() {
 		bd.close();
@@ -267,7 +267,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 			ajouterMot("badinage", MOYEN, NOM, "futilité plaisante, ou plaisanterie futile");
 			ajouterMot("crécelle", MOYEN, NOM, "instrument au son désagréable");
 			ajouterMot("miasme", MOYEN, NOM, "émanation fétide de corps décomposés");
-			ajouterMot("pléthore", MOYEN, NOM, "grande quatité");
+			ajouterMot("pléthore", MOYEN, NOM, "grande quantité");
 			ajouterMot("procrastiner", MOYEN, VERBE, "toujours remettre au lendemain");
 			ajouterMot("pugilat", MOYEN, NOM, "bagarre à coups de poings");
 			ajouterMot("superfétatoire", MOYEN, ADJECTIF, "superflu");
@@ -344,7 +344,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return eh bien : le mot !
 	 */
 	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
-		String sql = fprintf("SELECT %s FROM %s WHERE %s IN (0, %d) AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots));
+		String sql = fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots));
 		Journal.debg("requête mot : " + sql);
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_MOT);
@@ -379,7 +379,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
 		// sélection de la bonne réponse
-		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' AND %s IN (0, %s.%s) LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_TYPE, TABLE_MOT, COL_ID_TYPE);
+		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot);
 		Journal.debg("requête bonne réponse : " + sql);
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		c.moveToFirst();
@@ -388,7 +388,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		c.close();
 
 		// mauvaises réponses en ordre aléatoire
-		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, nb - 1);
+		String sousRequete = fprintf("SELECT %s FROM %s WHERE %s = '%s'", COL_ID_TYPE, TABLE_MOT, COL_MOT, mot);
+		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d AND %s IN (0, (%s)) ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, COL_ID_TYPE, sousRequete, nb - 1);
 		//c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
 		Journal.debg(sql);
 		c = (SQLiteCursor)bd.rawQuery(sql, null);
