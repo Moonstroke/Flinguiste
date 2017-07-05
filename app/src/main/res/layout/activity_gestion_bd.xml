@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+                                              style="@style/fenetre_telephone">
+
+	<!-- Ajout d'un mot dans la base de données -->
+	<android.support.v7.widget.AppCompatTextView style="@style/titre" android:text="@string/texte_aj_mot"/>
+	<android.support.v7.widget.LinearLayoutCompat style="@style/section">
+		<Spinner android:id="@+id/s_aj_mot_niv" style="@style/ligne2" android:layout_weight="1"/>
+		<Spinner android:id="@+id/s_aj_mot_type" style="@style/ligne2" android:layout_weight="1"/>
+	</android.support.v7.widget.LinearLayoutCompat>
+	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_mot_mot" style="@style/texte" android:hint="@string/astuce_aj_mot"/>
+	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_mot_def" style="@style/texte" android:hint="@string/astuce_aj_def"/>
+	<android.support.v7.widget.AppCompatButton style="@style/ligne2" android:text="@string/ajouter" android:onClick="ajMot"/>
+
+	<!-- Ajout d'une définition -->
+	<android.support.v7.widget.AppCompatTextView style="@style/titre" android:text="@string/texte_aj_def" />
+	<Spinner android:id="@+id/s_aj_def_type" style="@style/ligne2"/>
+	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_def_def" style="@style/texte" android:hint="@string/astuce_aj_def"/>
+	<android.support.v7.widget.AppCompatButton style="@style/ligne2" android:text="@string/ajouter" android:onClick="ajDef"/>
+
+</android.support.v7.widget.LinearLayoutCompat>

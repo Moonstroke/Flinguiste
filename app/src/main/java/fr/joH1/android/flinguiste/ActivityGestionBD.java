@@ -1,27 +1,21 @@
 package fr.joH1.android.flinguiste;
 
-
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 /**
  * @author joH1
  *
  */
-public class ParametresActivity extends AppCompatActivity {
+public class ActivityGestionBD extends AppCompatActivity {
 
 	private AssistantSQLite assistantSQLite;
-
-
-	private AppCompatEditText etChoix;
-	private AppCompatEditText etTotal;
 
 	private Spinner sAjMotNiv;
 	private Spinner sAjMotType;
@@ -38,12 +32,10 @@ public class ParametresActivity extends AppCompatActivity {
 		Context ctx = getApplicationContext();
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_parametres);
+		setContentView(R.layout.activity_gestion_bd);
 
 		assistantSQLite = new AssistantSQLite(ctx, false);
 
-		etChoix = (AppCompatEditText)findViewById(R.id.et_choix);
-		etTotal = (AppCompatEditText)findViewById(R.id.et_total);
 
 		sAjMotNiv = (Spinner)findViewById(R.id.s_aj_mot_niv);
 		sAjMotType = (Spinner)findViewById(R.id.s_aj_mot_type);
@@ -53,41 +45,6 @@ public class ParametresActivity extends AppCompatActivity {
 		sAjDefType = (Spinner)findViewById(R.id.s_aj_def_type);
 		etAjDefDef = (AppCompatEditText)findViewById(R.id.et_aj_def_def);
 
-
-		etChoix.setText(String.valueOf(Parametres.choix));
-		etTotal.setText(String.valueOf(Parametres.total));
-
-		etChoix.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-
-				if(!hasFocus) {
-					EditText et = (EditText)v;
-					String s = String.valueOf(et.getText());
-					if(s.length() != 0) {
-						int choix = Integer.parseInt(s);
-						if(choix != Parametres.choix) Parametres.choix = choix;
-					}
-					else et.setText(String.valueOf(Parametres.choix));
-				}
-			}
-		});
-
-		etTotal.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-
-				if(!hasFocus) {
-					EditText et = (EditText)v;
-					String s = String.valueOf(et.getText());
-					if(s.length() != 0) {
-						int total = Integer.parseInt(s);
-						if(total != Parametres.total) Parametres.total = total;
-					}
-					else et.setText(String.valueOf(Parametres.total));
-				}
-			}
-		});
 
 		String colType = "type";
 		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -104,7 +61,6 @@ public class ParametresActivity extends AppCompatActivity {
 		sAjMotNiv.setPrompt(ctx.getResources().getString(R.string.texte_aj_mot_niv));
 
 	}
-
 
 	public void ajMot(View v) {
 
@@ -123,6 +79,5 @@ public class ParametresActivity extends AppCompatActivity {
 
 		if(def.length() != 0) assistantSQLite.ajouterDefinition(def, type);
 	}
-
 
 }
