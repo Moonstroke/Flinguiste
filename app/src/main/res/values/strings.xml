@@ -1,17 +1,20 @@
 <resources>
 	<string name="nom_appli">Flinguiste</string>
-	<string name="jeu_acti">Partie en cours</string>
-	<string name="param_acti">Paramètres</string>
-	<string name="reglages">Réglages</string>
-	<string name="deverser_bd">Déverser la BD dans le journal</string>
+
 	<string name="titre_jeu_vocab">Questionnaire de vocabulaire</string>
 	<string name="titre_jeu_expr">Questionnaire d\'expressions</string>
 	<string name="texte_choix_niv">Choisir un niveau</string>
 	<string name="texte_nv_jeu">Nouveau jeu</string>
 	<string name="parametres">Paramètres</string>
-	<string name="suivant">Suivant</string>
+
+	<string name="acti_param">Paramètres</string>
+	<string name="reglages">Réglages</string>
+	<string name="deverser_bd">Déverser la BD dans le journal</string>
 	<string name="texte_choix">propositions par question</string>
 	<string name="texte_total">questions par partie</string>
+	<string name="gestion_bd">Gestion de la BD</string>
+
+	<string name="acti_gestion_bd">Gestion de la base de données</string>
 	<string name="texte_aj_mot">Ajouter un mot</string>
 	<string name="astuce_aj_mot">Entrer ici le mot à ajouter</string>
 	<string name="texte_aj_mot_type">Choisir un type de mot</string>
@@ -20,4 +23,7 @@
 	<string name="texte_aj_def">Ajouter une définition</string>
 	<string name="astuce_aj_def">Entrer ici la définition</string>
 	<string name="texte_aj_def_type">Choisir un type pour la définition</string>
+
+	<string name="acti_jeu">Partie en cours</string>
+	<string name="suivant">Suivant</string>
 </resources>

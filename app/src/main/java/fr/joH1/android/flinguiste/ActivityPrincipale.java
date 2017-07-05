@@ -3,7 +3,6 @@ package fr.joH1.android.flinguiste;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
@@ -30,6 +29,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	protected void onCreate(Bundle sauvegarde) {
 		super.onCreate(sauvegarde);
 
+		Parametres.restaurer(sauvegarde);
+
 		setContentView(R.layout.activity_principale);
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
 
@@ -37,13 +38,20 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	}
 
 	@Override
+	public void onSaveInstanceState(Bundle etatSortie) {
+		Parametres.sauvegarder(etatSortie);
+		Journal.debg("yep");
+	}
+
+	@Override
 	public void onDestroy() {
 		assistantSQLite.fermer();
-
 		assistantSQLite = null;
 
 		super.onDestroy();
 	}
+
+
 
 
 	/**
@@ -56,9 +64,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
 		getMenuInflater().inflate(R.menu.menu_principal, menu);
-
 		return true;
 	}
 
@@ -74,7 +80,6 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
 		switch(item.getItemId()) {
 			case R.id.reglages:
 				Journal.debg("Réglages");
@@ -134,7 +139,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		donnees.putInt("n", niveau);
 		donnees.putInt("c", Parametres.choix);
 		donnees.putInt("t", Parametres.total);
-		startActivityForResult(new Intent(this, JeuActivity.class).replaceExtras(donnees), code);
+		startActivityForResult(new Intent(this, ActivityJeu.class).replaceExtras(donnees), code);
 	}
 
 	/**
@@ -171,8 +176,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 */
 	public void param(View v) {
 
-		Journal.debg("Paramètres");
-		startActivity(new Intent(this, ParametresActivity.class));
+		startActivity(new Intent(this, ActivityParametres.class));
 	}
 
 }

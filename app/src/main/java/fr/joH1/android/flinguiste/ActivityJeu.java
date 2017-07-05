@@ -13,13 +13,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 /**
  * @author joH1
  *
  */
-public class JeuActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 	private AssistantSQLite assistantSQLite;
 
@@ -159,7 +157,7 @@ public class JeuActivity extends AppCompatActivity implements AdapterView.OnItem
 		btSuivant.setEnabled(false);
 		lvReponses.setEnabled(true);
 
-		Journal.verb(String.format(Locale.FRENCH, "(%d/%d) %s", courant, total, mot));
+		Journal.verb(String.format(java.util.Locale.FRENCH, "(%d/%d) %s", courant, total, mot));
 	}
 
 	/**
