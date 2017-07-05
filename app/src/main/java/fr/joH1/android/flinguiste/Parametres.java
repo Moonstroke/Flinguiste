@@ -25,7 +25,7 @@ class Parametres {
 
 
 	public static void restaurer(Bundle b) {
-		if(b == null) { // sait-on jamais
+		if(b != null) { // sait-on jamais
 			choix = b.getInt("c", CHOIX_DEFAUT);
 			total = b.getInt("t", TOTAL_DEFAUT);
 		} else {
@@ -46,4 +46,7 @@ class Parametres {
 		return b;
 	}
 
+	public static String repr() {
+		return String.format("choix = %d, total = %d", choix, total);
+	}
 }
