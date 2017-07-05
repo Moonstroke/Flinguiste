@@ -27,7 +27,10 @@ class Parametres {
 	}
 
 	public Bundle sauvegarder() {
-		Bundle b = new Bundle(2);
+		return sauvegarder(new Bundle(2));
+	}
+
+	public Bundle sauvegarder(Bundle b) {
 		b.putInt("c", choix);
 		b.putInt("t", total);
 		return b;
