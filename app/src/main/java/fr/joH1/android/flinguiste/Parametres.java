@@ -8,6 +8,9 @@ import android.os.Bundle;
  */
 class Parametres {
 
+	private static final int CHOIX_DEFAUT = 4;
+	public static final int TOTAL_DEFAUT = 10;
+
 	/**
 	 * Le nombre de propositions par question
 	 * <i>Astuce du pro :</i> 4 est un choix raisonnable
@@ -22,15 +25,22 @@ class Parametres {
 
 
 	public static void restaurer(Bundle b) {
-		choix = b.getInt("c", 4);
-		total = b.getInt("t", 10);
+		if(b == null) { // sait-on jamais
+			choix = b.getInt("c", CHOIX_DEFAUT);
+			total = b.getInt("t", TOTAL_DEFAUT);
+		} else {
+			choix = CHOIX_DEFAUT;
+			total = TOTAL_DEFAUT;
+		}
 	}
 
-	public Bundle sauvegarder() {
+	public static Bundle sauvegarder() {
 		return sauvegarder(new Bundle(2));
 	}
 
-	public Bundle sauvegarder(Bundle b) {
+	public static Bundle sauvegarder(Bundle b) {
+		if(b == null)
+			b = new Bundle(2);
 		b.putInt("c", choix);
 		b.putInt("t", total);
 		return b;
