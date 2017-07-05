@@ -1,4 +1,4 @@
-package fr.joh1.android.flinguiste;
+package fr.joH1.android.flinguiste;
 
 import android.app.Activity;
 import android.content.Intent;

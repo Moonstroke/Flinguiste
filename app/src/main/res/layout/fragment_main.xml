@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
-                                              tools:context="fr.joh1.android.flinguiste.FragmentActivityPrincipale" tools:showIn="@layout/activity_principale"
+                                              tools:context="fr.joH1.android.flinguiste.FragmentActivityPrincipale" tools:showIn="@layout/activity_principale"
                                               style="@style/fenetre_telephone">
 
 
