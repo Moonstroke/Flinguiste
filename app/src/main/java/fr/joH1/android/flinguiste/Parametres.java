@@ -47,6 +47,6 @@ class Parametres {
 	}
 
 	public static String repr() {
-		return String.format("choix = %d, total = %d", choix, total);
+		return String.format(java.util.Locale.US, "choix = %d, total = %d", choix, total);
 	}
 }
