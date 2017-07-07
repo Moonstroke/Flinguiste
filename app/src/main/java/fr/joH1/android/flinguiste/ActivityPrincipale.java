@@ -101,7 +101,6 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		if(codeResultat == Activity.RESULT_OK)
 			switch(codeRequete) {
 				case NV_PARTIE_EXPR_CODE:
-					break;
 				case NV_PARTIE_VOCAB_CODE:
 					break;
 				default:
@@ -119,13 +118,13 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * @param id l'identifiant de la vue cliquée (inutile, en général)
 	 */
 	@Override
-	public void onItemSelected(AdapterView<?> l, View v, int i, long id) {
+	public void onItemSelected(AdapterView l, View v, int i, long id) {
 		niveau = i;
-		Toast.makeText(this, String.valueOf(((TextView)v).getText()), Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, String.valueOf(((TextView)v).getText()), Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> l) {
+	public void onNothingSelected(AdapterView l) {
 		Toast.makeText(this, "Il faut choisir un niveau !", Toast.LENGTH_SHORT).show();
 	}
 
@@ -135,10 +134,8 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 			Toast.makeText(this, "Niveau 0 pas encore implémenté", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		Bundle donnees = new Bundle(2);
+		Bundle donnees = new Bundle(1);
 		donnees.putInt("n", niveau);
-		donnees.putInt("c", Parametres.choix);
-		donnees.putInt("t", Parametres.total);
 		startActivityForResult(new Intent(this, ActivityJeu.class).replaceExtras(donnees), code);
 	}
 
