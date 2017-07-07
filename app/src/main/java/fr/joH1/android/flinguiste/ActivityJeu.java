@@ -13,6 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import static fr.joH1.android.flinguiste.Parametres.choix;
+import static fr.joH1.android.flinguiste.Parametres.total;
+
 /**
  * @author joH1
  *
@@ -67,8 +70,8 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		Bundle donnees = getIntent().getExtras();
 		niveau = donnees.getInt("n");
 
-		mots = new String[Parametres.total];
-		courant = 0;
+		mots = new String[total];
+		courant = 1;
 		score = 0;
 
 		tvMot = (AppCompatTextView)findViewById(R.id.tv_mot);
@@ -125,7 +128,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		String mot;
 		try {
 			mot = assistantSQLite.motAleat(niveau, mots);
-			mots[++courant] = mot;
+			mots[courant - 1] = mot;
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();
@@ -135,13 +138,13 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 
 		// TODO trouver un moyen de ne mettre à jour QUE le contenu de la liste et non tout l'adapteur
 		lvReponses.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-		                                         assistantSQLite.propositions(mot, Parametres.choix)));
+		                                         assistantSQLite.propositions(mot, choix)));
 
 		tvMot.setText(mot);
 		btSuivant.setEnabled(false);
 		lvReponses.setEnabled(true);
 
-		Journal.verb(String.format(java.util.Locale.FRENCH, "(%d/%d) %s", courant, Parametres.total, mot));
+		Journal.verb(String.format(java.util.Locale.FRENCH, "(%d/%d) %s", courant, total, mot));
 	}
 
 	/**
@@ -149,13 +152,14 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 */
 	private void finir() {
 
-		Bundle donnees = new Bundle(3);
+		Bundle donnees = new Bundle(5);
 		donnees.putInt("n", niveau);
+		donnees.putString("N", assistantSQLite.nomNiveau(niveau));
 		donnees.putInt("s", score);
+		donnees.putInt("t", courant); // peut être différent de total, si on a épuisé la BD avant l'heure
 		donnees.putStringArray("m", mots);
 
 		setResult(Activity.RESULT_OK, new Intent().replaceExtras(donnees));
-
 		finish();
 	}
 
@@ -165,7 +169,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 * @param v inutilisé
 	 */
 	public void suivant(View v) {
-		if(courant == Parametres.total)
+		if(++courant == total)
 			finir();
 		else
 			initQuestion();
