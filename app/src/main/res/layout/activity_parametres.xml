@@ -4,14 +4,14 @@
 
 	<!-- Paramétrage du nombre de questions par partie -->
 	<android.support.v7.widget.LinearLayoutCompat style="@style/section">
-		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_choix" style="@style/mot" android:inputType="number"/>
-		<android.support.v7.widget.AppCompatTextView style="@style/texte" android:text="@string/texte_choix"/>
+		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_choix" style="@style/ligne" android:layout_weight="3" android:inputType="number"/>
+		<android.support.v7.widget.AppCompatTextView style="@style/ligne2" android:text="@string/texte_choix"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
 	<!-- Paramétrage du nombre de propositions par question -->
 	<android.support.v7.widget.LinearLayoutCompat style="@style/section">
-		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_total" style="@style/mot" android:inputType="number"/>
-		<android.support.v7.widget.AppCompatTextView style="@style/texte" android:text="@string/texte_total"/>
+		<android.support.v7.widget.AppCompatEditText android:id="@+id/et_total" style="@style/ligne" android:layout_weight="3" android:inputType="number"/>
+		<android.support.v7.widget.AppCompatTextView style="@style/ligne2" android:text="@string/texte_total"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 
 	<!-- Lancer l'Activity qui s'occupe de tout ce qui a trait à la base de données -->
