@@ -27,19 +27,9 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	private int niveau;
 
 	/**
-	 * Le nombre total de questions dans cette partie
-	 */
-	private int total;
-
-	/**
 	 * La question à laquelle on est rendu
 	 */
 	private int courant;
-
-	/**
-	 * Le nombre de propositions par mot
-	 */
-	private int choix;
 
 	/**
 	 * La liste des mots rencontrés depuis le début de la partie
@@ -67,23 +57,17 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	private AppCompatButton btSuivant;
 
 
-	/**
-	 *
-	 * @param savedInstanceState
-	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected void onCreate(Bundle sauvegarde) {
+		super.onCreate(sauvegarde);
 		setContentView(R.layout.activity_jeu);
 
 		assistantSQLite = new AssistantSQLite(getApplicationContext(), true);
 
 		Bundle donnees = getIntent().getExtras();
 		niveau = donnees.getInt("n");
-		total = donnees.getInt("t");
-		choix = donnees.getInt("c");
 
-		mots = new String[total];
+		mots = new String[Parametres.total];
 		courant = 0;
 		score = 0;
 
@@ -115,10 +99,10 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 * @param l la liste des propositions
 	 * @param v la vue sélectionnée (cliquée)
 	 * @param i la position de la vue dans la liste (à partir de 0)
-	 * @param _ l'identifiant de la vue
+	 * @param _ l'identifiant de la vue (mais on s'en fiche)
 	 */
 	@Override
-	public void onItemClick(AdapterView<?> l, View v, int i, long _) {
+	public void onItemClick(AdapterView l, View v, int i, long _) {
 		Reponse rep = (Reponse)l.getItemAtPosition(i);
 		boolean gagne = rep.estBonne();
 
@@ -141,7 +125,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		String mot;
 		try {
 			mot = assistantSQLite.motAleat(niveau, mots);
-			mots[courant++] = mot;
+			mots[++courant] = mot;
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();
@@ -150,14 +134,14 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		}
 
 		// TODO trouver un moyen de ne mettre à jour QUE le contenu de la liste et non tout l'adapteur
-		lvReponses.setAdapter(new ArrayAdapter<Reponse>(this, android.R.layout.simple_list_item_1,
-														assistantSQLite.propositions(mot, choix)));
+		lvReponses.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+		                                         assistantSQLite.propositions(mot, Parametres.choix)));
 
 		tvMot.setText(mot);
 		btSuivant.setEnabled(false);
 		lvReponses.setEnabled(true);
 
-		Journal.verb(String.format(java.util.Locale.FRENCH, "(%d/%d) %s", courant, total, mot));
+		Journal.verb(String.format(java.util.Locale.FRENCH, "(%d/%d) %s", courant, Parametres.total, mot));
 	}
 
 	/**
@@ -165,9 +149,8 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 */
 	private void finir() {
 
-		Bundle donnees = new Bundle(4);
+		Bundle donnees = new Bundle(3);
 		donnees.putInt("n", niveau);
-		donnees.putInt("t", total);
 		donnees.putInt("s", score);
 		donnees.putStringArray("m", mots);
 
@@ -182,7 +165,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 * @param v inutilisé
 	 */
 	public void suivant(View v) {
-		if(courant == total)
+		if(courant == Parametres.total)
 			finir();
 		else
 			initQuestion();

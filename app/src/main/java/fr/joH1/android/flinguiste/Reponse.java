@@ -22,8 +22,8 @@ class Reponse {
 
 
 	/**
-	 * surcharge de la méthode d'{@code Object} pour ne renvoyer que la définition de cet objet
-	 * (pratique car c'est cette méthode qui est appelée dans un {@code ArrayAdapter} !)
+	 * Ne renvoie que la <i>définition</i> de cet objet
+	 * (pratique car c'est cette méthode qui est appelée dans un {@link android.widget.ArrayAdapter} !)
 	 *
 	 * TODO regarder du côté de Adapter.setCursorToStringConverter (peut être intéressant)
 	 *
