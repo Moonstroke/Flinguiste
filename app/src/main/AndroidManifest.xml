@@ -22,6 +22,9 @@
         </activity>
 
 		<activity android:name=".ActivityGestionBD" android:label="@string/acti_gestion_bd" android:parentActivityName=".ActivityParametres">
+		</activity>
+
+		<activity android:name=".ActivityScore" android:label="@string/acti_score" android:parentActivityName=".ActivityPrincipale">
         </activity>
     </application>
 

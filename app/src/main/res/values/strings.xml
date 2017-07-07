@@ -27,4 +27,6 @@
 	<string name="acti_jeu">Partie en cours</string>
 	<string name="suivant">Suivant</string>
 
+	<string name="acti_score">Résultat de la partie</string>
+
 </resources>

@@ -102,6 +102,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 			switch(codeRequete) {
 				case NV_PARTIE_EXPR_CODE:
 				case NV_PARTIE_VOCAB_CODE:
+					startActivity(new Intent(this, ActivityScore.class).replaceExtras(donnees));
 					break;
 				default:
 					break;
