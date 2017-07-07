@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 
+import static fr.joH1.android.flinguiste.Parametres.fprintf;
+
 /**
  * @author joH1
  *
@@ -222,8 +224,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private int ajouterType(String type, int id) {
 
 		ContentValues ligne = new ContentValues();
-		ligne.put(COL_NIV, type);
-		ligne.put(COL_ID_NIV, id);
+		ligne.put(COL_TYPE, type);
+		ligne.put(COL_ID_TYPE, id);
 
 		return (int)bd.insert(TABLE_TYPE, null, ligne);
 	}
@@ -313,7 +315,21 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
 
-
+	/**
+	 * Renvoie le nom du niveau d'identifiant numérique n
+	 *
+	 * @param n l'identifiant numérique de la colonne à retourner
+	 *
+	 * @return le nom de la colonne associée à n (on aura compris)
+	 */
+	public String nomNiveau(int n) {
+		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIV, TABLE_NIVEAU, COL_ID_NIV, n), null);
+		try {
+			return c.moveToFirst() ? c.getString(c.getColumnIndex(COL_NIV)) : null;
+		} finally {
+			c.close();
+		}
+	}
 	/**
 	 * Renvoie un {@link SQLiteCursor} sur les types de mot à associer à un {@link android.widget.Spinner}
 	 *
@@ -419,8 +435,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		// On s'octroie 10 caractères par mot, en gros
 		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste[0]).append("'");
 
-		for(int i = 1; i < l; ++i)
-			if(liste[i] != null) res.append(", '").append(liste[i]).append("'");
+		for(int i = 1; i < l && liste[i] != null; ++i)
+			res.append(", '").append(liste[i]).append("'");
 		res.append(")");
 		return res.toString();
 	}
@@ -452,21 +468,4 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		}
 	}
 
-	/**
-	 * Une surcharge de {@link String#format(java.util.Locale, String, Object...)} parce que devoir passer
-	 * la {@link java.util.Locale} en paramètre, c'est soûlant, et que le C, c'est bien !
-	 *
-	 * Pour plus d'infos sur le format, voir la doc
-	 *
-	 *  {@code Locale.US} correspond à l'ASCII, l'encodage idoine pour du SQL (les seuls cas actuels
-	 * d'utilisation de cette fonction)
-	 *
-	 * @param s    la chaîne à formater
-	 * @param args les arguments à intégrer dans la chaîne
-	 *
-	 * @return la chaîne de caractères entrée formatée avec les arguments
-	 */
-	private static String fprintf(String s, Object... args) {
-		return new java.util.Formatter(java.util.Locale.US).format(s, args).toString();
-	}
 }
