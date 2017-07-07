@@ -47,6 +47,24 @@ class Parametres {
 	}
 
 	public static String repr() {
-		return String.format(java.util.Locale.US, "choix = %d, total = %d", choix, total);
+		return fprintf("choix = %d, total = %d", choix, total);
+	}
+
+	/**
+	 * Une surcharge de {@link String#format(java.util.Locale, String, Object...)} parce que devoir passer
+	 * la {@link java.util.Locale} en paramètre, c'est soûlant, et que {@code C}, c'est bien !
+	 *
+	 * Pour plus d'infos sur le format, voir la doc
+	 *
+	 *  {@code Locale.US} correspond à l'ASCII, l'encodage idoine pour du SQL (les seuls cas actuels
+	 * d'utilisation de cette fonction)
+	 *
+	 * @param s    la chaîne à formater
+	 * @param args les arguments à intégrer dans la chaîne
+	 *
+	 * @return la chaîne de caractères entrée formatée avec les arguments
+	 */
+	public static String fprintf(String s, Object... args) {
+		return new java.util.Formatter(java.util.Locale.US).format(s, args).toString();
 	}
 }
