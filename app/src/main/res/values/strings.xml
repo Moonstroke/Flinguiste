@@ -12,7 +12,7 @@
 	<string name="deverser_bd">Déverser la BD dans le journal</string>
 	<string name="texte_choix">propositions par question</string>
 	<string name="texte_total">questions par partie</string>
-	<string name="gestion_bd">Gestion de la BD</string>
+	<string name="gestion_bd">Gestion de la base de données</string>
 
 	<string name="acti_gestion_bd">Gestion de la base de données</string>
 	<string name="texte_aj_mot">Ajouter un mot</string>
@@ -26,4 +26,5 @@
 
 	<string name="acti_jeu">Partie en cours</string>
 	<string name="suivant">Suivant</string>
+
 </resources>
