@@ -1,40 +1,66 @@
 package fr.joH1.android.flinguiste;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Spinner;
+
 
 /**
  * @author joH1
  *
  */
-public class ActivityPrincipale extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class ActivityPrincipale extends AppCompatActivity {
 
 	private AssistantSQLite assistantSQLite;
 
 	private static final int NV_PARTIE_VOCAB_CODE = 1;
 	private static final int NV_PARTIE_EXPR_CODE = 2;
 
-	private int niveau;
+	private int niveauVocab;
+	private int niveauExpr;
+
+	private Spinner s_nivVocab;
+	private Spinner s_nivExpr;
 
 
 	@Override
 	protected void onCreate(Bundle sauvegarde) {
 		super.onCreate(sauvegarde);
 
+		Context ctx = getApplicationContext();
 		Parametres.restaurer(sauvegarde);
 
 		setContentView(R.layout.activity_principale);
-		assistantSQLite = new AssistantSQLite(getApplicationContext(), false);
+		assistantSQLite = new AssistantSQLite(ctx, false);
 
-		niveau = 0; // À la rigueur pas nécessaire, le onItemSelected() des spinners s'en charge tout seul
+		niveauVocab = 0; // À la rigueur pas nécessaire, le onItemSelected() des spinners s'en charge tout seul
+		niveauExpr = 0;
+		s_nivVocab = (Spinner)findViewById(R.id.s__niv_vocab);
+		s_nivExpr = (Spinner)findViewById(R.id.s__niv_expr);
+
+		String colNiv = "niveau";
+		SQLiteCursor c = assistantSQLite.niveaux(colNiv, true);
+		SimpleCursorAdapter adaptateur = new SimpleCursorAdapter(ctx, android.R.layout.simple_spinner_item, c, new String[] {colNiv}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		adaptateur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		s_nivVocab.setAdapter(adaptateur);
+		s_nivExpr.setAdapter(adaptateur);
+
+		s_nivVocab.setOnItemSelectedListener(oreilleClic(NV_PARTIE_VOCAB_CODE));
+		s_nivExpr.setOnItemSelectedListener(oreilleClic(NV_PARTIE_EXPR_CODE));
+
+		String texteChoixNiv = getResources().getString(R.string.texte_choix_niv);
+		s_nivVocab.setPrompt(texteChoixNiv);
+		s_nivExpr.setPrompt(texteChoixNiv);
 	}
 
 	@Override
@@ -92,12 +118,12 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 		}
 	}
 
+
 	@Override
 	public void onActivityResult(int codeRequete, int codeResultat, Intent i) {
 		if(i == null) return;
 
 		Bundle donnees = i.getExtras();
-
 		if(codeResultat == Activity.RESULT_OK)
 			switch(codeRequete) {
 				case NV_PARTIE_EXPR_CODE:
@@ -110,46 +136,26 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	}
 
 
-	/**
-	 * Gère la sélection d'un élément des {@link android.widget.Spinner spinners} de choix de niveau.
-	 *
-	 * @param l  la vue contenant les éléments cliquables
-	 * @param v  la vue cliquée
-	 * @param i  la position, à partir de 0, de la vue cliquée dans {@code parent}
-	 * @param id l'identifiant de la vue cliquée (inutile, en général)
-	 */
-	@Override
-	public void onItemSelected(AdapterView l, View v, int i, long id) {
-		niveau = i;
-		//Toast.makeText(this, String.valueOf(((TextView)v).getText()), Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView l) {
-		Toast.makeText(this, "Il faut choisir un niveau !", Toast.LENGTH_SHORT).show();
-	}
-
-
 	private void lancerPartie(int code) {
-		if(niveau == 0) {
-			Toast.makeText(this, "Niveau 0 pas encore implémenté", Toast.LENGTH_SHORT).show();
-			return;
-		}
 		Bundle donnees = new Bundle(1);
-		donnees.putInt("n", niveau);
-		startActivityForResult(new Intent(this, ActivityJeu.class).replaceExtras(donnees), code);
+		if(code == NV_PARTIE_VOCAB_CODE) {
+			donnees.putInt("n", niveauVocab);
+		}
+		else if(code == NV_PARTIE_EXPR_CODE) {
+			donnees.putInt("n", niveauExpr);
+		}
+	startActivityForResult(new Intent(this, ActivityJeu.class).replaceExtras(donnees), code);
 	}
+
 
 	/**
 	 * Appelée au clic sur le bouton de jeu de vocabulaire.
 	 * Définie en {@code onClick} dans le XML
 	 *
-	 * @param v le bouton « Nouveau jeu » de vocabulaire, de type générique {@code View},
+	 * @param v le bouton « Nouveau jeu » de vocabulaire, de type générique {@link View},
 	 *          donc à forger si on veut en faire quelque chose.
 	 */
-	public void nvJeuVocab(View v) {
-		lancerPartie(NV_PARTIE_VOCAB_CODE);
-	}
+	public void nvJeuVocab(View v) { lancerPartie(NV_PARTIE_VOCAB_CODE); }
 
 	/**
 	 * Idem que la méthode précédente, mais pour un jeu sur les expressions
@@ -159,10 +165,7 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 * @param v le bouton « Nouveau jeu » sur les expressions, encore une fois
 	 *          de type générique {@code View}
 	 */
-	public void nvJeuExpr(View v) {
-		//lancerPartie(NV_PARTIE_EXPR_CODE);
-		Toast.makeText(this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
-	}
+	public void nvJeuExpr(View v) { lancerPartie(NV_PARTIE_EXPR_CODE); }
 
 	/**
 	 * De même que les méthodes précdentes, celle-ci est appelée au clic sur le bouton des
@@ -172,9 +175,37 @@ public class ActivityPrincipale extends AppCompatActivity implements AdapterView
 	 *
 	 * @param v le bouton « Paramètres »
 	 */
-	public void param(View v) {
+	public void param(View v) { startActivity(new Intent(this, ActivityParametres.class)); }
 
-		startActivity(new Intent(this, ActivityParametres.class));
+	private AdapterView.OnItemSelectedListener oreilleClic(int typeJeu) {
+		if(typeJeu == NV_PARTIE_VOCAB_CODE)
+			return new AdapterView.OnItemSelectedListener() {
+				/**
+				 * Gère la sélection d'un élément des {@link android.widget.Spinner spinners} de choix de niveau.
+				 *
+				 * Valable pour les deux définitions !
+				 * @param av  la vue contenant les éléments cliquables
+				 * @param v  la vue cliquée
+				 * @param i  la position, à partir de 0, de la vue cliquée dans {@code parent}
+				 * @param l l'identifiant de la vue cliquée (inutile, en général)
+				 */
+				@Override
+				public void onItemSelected(AdapterView av, View v, int i, long l) {
+					niveauVocab = i;
+				}
+
+				@Override public void onNothingSelected(AdapterView ll) {}
+			};
+		else if(typeJeu == NV_PARTIE_EXPR_CODE)
+			return new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView av, View v, int i, long l) {
+					niveauExpr = i;
+				}
+
+				@Override public void onNothingSelected(AdapterView ll) {}
+			};
+		else return null;
 	}
 
 }
