@@ -22,7 +22,7 @@ final class Journal {
 	 *
 	 * @return le nombre d'octets affichés
 	 */
-	public static int verb(String msg) {
+	static int verb(String msg) {
 		return Log.v(ETIQ_LOG, msg);
 	}
 
@@ -34,7 +34,7 @@ final class Journal {
 	 *
 	 * @return le nombre d'octets affichés
 	 */
-	public static int debg(String msg) {
+	static int debg(String msg) {
 		return Log.d(ETIQ_LOG, msg);
 	}
 
@@ -46,7 +46,7 @@ final class Journal {
 	 *
 	 * @return le nombre d'octets affichés
 	 */
-	public static int info(String msg) {
+	static int info(String msg) {
 		return Log.i(ETIQ_LOG, msg);
 	}
 
@@ -58,7 +58,7 @@ final class Journal {
 	 *
 	 * @return le nombre d'octets affichés
 	 */
-	public static int avrt(String msg) {
+	static int avrt(String msg) {
 		return Log.w(ETIQ_LOG, msg);
 	}
 
@@ -70,7 +70,7 @@ final class Journal {
 	 *
 	 * @return le nombre d'octets affichés
 	 */
-	public static int err(String msg) {
+	static int err(String msg) {
 		return Log.e(ETIQ_LOG, msg);
 	}
 
@@ -82,7 +82,7 @@ final class Journal {
 	 *
 	 * @return le nombre d'octets affichés
 	 */
-	public static int crit(String msg) {
+	static int crit(String msg) {
 		return Log.wtf(ETIQ_LOG, msg);
 	}
 

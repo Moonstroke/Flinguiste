@@ -9,22 +9,22 @@ import android.os.Bundle;
 class Parametres {
 
 	private static final int CHOIX_DEFAUT = 4;
-	public static final int TOTAL_DEFAUT = 10;
+	private static final int TOTAL_DEFAUT = 10;
 
 	/**
 	 * Le nombre de propositions par question
 	 * <i>Astuce du pro :</i> 4 est un choix raisonnable
 	 */
-	public static int choix;
+	static int choix;
 
 	/**
 	 * Le nombre de questions par partie
 	 * <i>Astuce du pro :</i> 10 est de même un choix tout à fait légitime
 	 */
-	public static int total;
+	static int total;
 
 
-	public static void restaurer(Bundle b) {
+	static void restaurer(Bundle b) {
 		if(b != null) { // sait-on jamais
 			choix = b.getInt("c", CHOIX_DEFAUT);
 			total = b.getInt("t", TOTAL_DEFAUT);
@@ -34,11 +34,12 @@ class Parametres {
 		}
 	}
 
-	public static Bundle sauvegarder() {
+	@Deprecated
+	static Bundle sauvegarder() {
 		return sauvegarder(new Bundle(2));
 	}
 
-	public static Bundle sauvegarder(Bundle b) {
+	static Bundle sauvegarder(Bundle b) {
 		if(b == null)
 			b = new Bundle(2);
 		b.putInt("c", choix);
@@ -46,7 +47,7 @@ class Parametres {
 		return b;
 	}
 
-	public static String repr() {
+	static String repr() {
 		return fprintf("choix = %d, total = %d", choix, total);
 	}
 
@@ -64,7 +65,7 @@ class Parametres {
 	 *
 	 * @return la chaîne de caractères entrée formatée avec les arguments
 	 */
-	public static String fprintf(String s, Object... args) {
+	static String fprintf(String s, Object... args) {
 		return new java.util.Formatter(java.util.Locale.US).format(s, args).toString();
 	}
 }

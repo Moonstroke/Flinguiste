@@ -41,7 +41,7 @@ class Reponse {
 	 *
 	 * @return la réponse est-elle la bonne réponse ?
 	 */
-	public boolean estBonne() {
+	boolean estBonne() {
 		return bonne;
 	}
 }
