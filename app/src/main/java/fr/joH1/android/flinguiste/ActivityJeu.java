@@ -73,7 +73,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		niveau = donnees.getInt("n");
 
 		mots = new ArrayList<>(total);
-		courant = 1;
+		courant = 0;
 		score = 0;
 
 		tvMot = (AppCompatTextView)findViewById(R.id.tv_mot);
@@ -127,6 +127,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 */
 	private void initQuestion() {
 
+		courant++;
 		String mot;
 		try {
 			mot = assistantSQLite.motAleat(niveau, mots);
@@ -171,7 +172,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 * @param v inutilisé
 	 */
 	public void suivant(View v) {
-		if(++courant == total)
+		if(courant == total)
 			finir();
 		else
 			initQuestion();
