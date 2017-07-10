@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import static fr.joH1.android.flinguiste.Parametres.choix;
 import static fr.joH1.android.flinguiste.Parametres.total;
 
@@ -37,7 +39,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	/**
 	 * La liste des mots rencontrés depuis le début de la partie
 	 */
-	private String[] mots;
+	private ArrayList<String> mots;
 
 	/**
 	 * Le nombre de mots correctement trouvés
@@ -70,7 +72,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		Bundle donnees = getIntent().getExtras();
 		niveau = donnees.getInt("n");
 
-		mots = new String[total];
+		mots = new ArrayList<>(total);
 		courant = 1;
 		score = 0;
 
@@ -128,7 +130,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		String mot;
 		try {
 			mot = assistantSQLite.motAleat(niveau, mots);
-			mots[courant - 1] = mot;
+			mots.add(mot);
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();
@@ -157,7 +159,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		donnees.putString("N", assistantSQLite.nomNiveau(niveau));
 		donnees.putInt("s", score);
 		donnees.putInt("t", courant); // peut être différent de total, si on a épuisé la BD avant l'heure
-		donnees.putStringArray("m", mots);
+		donnees.putStringArrayList("m", mots);
 
 		setResult(Activity.RESULT_OK, new Intent().replaceExtras(donnees));
 		finish();

@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ListViewCompat;
 import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
+
 import static fr.joH1.android.flinguiste.Parametres.fprintf;
 
 public class ActivityScore extends AppCompatActivity {
@@ -32,7 +34,8 @@ public class ActivityScore extends AppCompatActivity {
 		String nomNiveau = donnees.getString("N");
 		tvScore.setText(fprintf("« %s » : %d sur %d", nomNiveau, score, total));
 
-		String[] mots = donnees.getStringArray("m");
+		ArrayList<String> mots = donnees.getStringArrayList("m");
+		Journal.debg(mots.toString());
 		lvScore.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mots));
 
 		Journal.debg("zut alors");

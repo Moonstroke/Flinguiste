@@ -69,7 +69,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	/**
 	 * Enveloppe pour la méthode {@code {@link android.database.sqlite.SQLiteClosable#close() close}}
 	 */
-	public void fermer() {
+	void fermer() {
 		bd.close();
 	}
 
@@ -148,7 +148,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return l'identifiant numérique de la ligne tout juste ajoutée
 	 */
-	public int ajouterMot(String mot, int niveau, int type, String definition) {
+	int ajouterMot(String mot, int niveau, int type, String definition) {
 		ContentValues ligne = new ContentValues();
 		ligne.put(COL_MOT, mot);
 		ligne.put(COL_ID_NIV, niveau);
@@ -174,7 +174,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return l'identifiant numérique de la ligne tout juste ajoutée
 	 */
-	public int ajouterDefinition(String definition, int type) {
+	int ajouterDefinition(String definition, int type) {
 		ContentValues ligne = new ContentValues();
 		ligne.put(COL_DEF, definition);
 		if(type >= 0) ligne.put(COL_TYPE, String.valueOf(type));
@@ -183,7 +183,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
 	}
 
-	public int ajouterDefinition(String definition) {
+	int ajouterDefinition(String definition) {
 		ContentValues ligne = new ContentValues();
 		ligne.put(COL_DEF, definition);
 		ligne.putNull(COL_ID_MOT);
@@ -321,13 +321,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return le nom de la colonne associée à n (on aura compris)
 	 */
-	public String nomNiveau(int n) {
-		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIV, TABLE_NIVEAU, COL_ID_NIV, n), null);
+	String nomNiveau(int n) {
 		String niveau;
-		try {
+		try(SQLiteCursor c = (SQLiteCursor)bd.rawQuery(fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIV, TABLE_NIVEAU, COL_ID_NIV, n), null)) {
 			niveau = c.moveToFirst() ? c.getString(c.getColumnIndex(COL_NIV)) : null;
-		} finally {
-			c.close();
 		}
 		return niveau;
 	}
@@ -354,7 +351,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return eh bien : le mot !
 	 */
-	public String motAleat(int niveau, String[] mots) throws BaseEpuiseeException {
+	String motAleat(int niveau, ArrayList<String> mots) throws BaseEpuiseeException {
 		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots))
 								: fprintf("SELECT %s FROM %s WHERE %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_MOT, listeSQL(mots));
 
@@ -386,7 +383,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return la liste sus-mentionnée
 	 */
-	public ArrayList<Reponse> propositions(String mot, int nb) {
+	ArrayList<Reponse> propositions(String mot, int nb) {
 
 		ArrayList<Reponse> definitions = new ArrayList<>(nb);
 
@@ -402,18 +399,19 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		// mauvaises réponses en ordre aléatoire
 		String sousRequete = fprintf("SELECT %s FROM %s WHERE %s = '%s'", COL_ID_TYPE, TABLE_MOT, COL_MOT, mot);
 		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d AND %s IN (0, (%s)) ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, COL_ID_TYPE, sousRequete, nb - 1);
-		//c = bd.query(true, TABLE_MOT + " NATURAL JOIN " + TABLE_DEFINITION, new String[] {COL_DEF}, "?  != ? and ? != ?", new String[] {COL_MOT, mot, COL_ID_DEF, String.valueOf(idBonneRep)}, null, null, " RANDOM()", "3");
 
 		c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_DEF);
-
+		int n = 0; // le nombre effectif de lignes trouvé
 		while(c.moveToNext()) {
 			definitions.add(new Reponse(false, c.getString(col)));
+			n++;
 		}
 		c.close();
 
 		// bonne réponse ajoutée aléatoirement dans l'ArrayList
-		definitions.add(new java.util.Random().nextInt(nb), new Reponse(true, bonneReponse));
+		int i = java.lang.Math.max(nb, n);
+		definitions.add(new java.util.Random().nextInt(i), new Reponse(true, bonneReponse));
 
 		return definitions;
 	}
@@ -427,22 +425,22 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return une chaîne de {@code SQL} (valide)
 	 */
 	@NonNull
-	private String listeSQL(String[] liste) {
+	static String listeSQL(ArrayList<String> liste) {
 
-		int l = liste.length;
-		if(l == 0 || liste[0] == null) return "()";
+		int l = liste.size();
+		if(l == 0 || liste.get(0) == null) return "()";
 
 		// On s'octroie 10 caractères par mot, en gros
-		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste[0]).append("'");
+		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste.get(0)).append("'");
 
-		for(int i = 1; i < l && liste[i] != null; ++i)
-			res.append(", '").append(liste[i]).append("'");
+		for(int i = 1; i < l; ++i)
+			res.append(", '").append(liste.get(i)).append("'");
 		res.append(")");
 		return res.toString();
 	}
 
 
-	public void deverser() {
+	void deverser() {
 
 		Journal.debg(bd.getPath());
 		SQLiteCursor c;
@@ -454,13 +452,13 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 			sb = new StringBuilder(t);
 			for(int i = 0; i < n; ++i)
-				sb.append(" | " + c.getColumnName(i));
+				sb.append(" | ").append(c.getColumnName(i));
 			Journal.debg(sb.toString());
 
 			while(c.moveToNext()) {
 				sb = new StringBuilder(t);
 				for(int i = 0; i < n; ++i)
-					sb.append(" | " + c.getString(i));
+					sb.append(" | ").append(c.getString(i));
 				Journal.debg(sb.toString());
 			}
 
