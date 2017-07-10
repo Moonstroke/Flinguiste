@@ -99,14 +99,14 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 * en vert, sinon la colore en rouge.
 	 * Dans tous les cas, désactive la gestion des clics sur la liste, et l'active sur le bouton SUIVANT.
 	 *
-	 * @param l la liste des propositions
+	 * @param av la liste des propositions
 	 * @param v la vue sélectionnée (cliquée)
 	 * @param i la position de la vue dans la liste (à partir de 0)
-	 * @param _ l'identifiant de la vue (mais on s'en fiche)
+	 * @param l l'identifiant de la vue (mais on s'en fiche)
 	 */
 	@Override
-	public void onItemClick(AdapterView l, View v, int i, long _) {
-		Reponse rep = (Reponse)l.getItemAtPosition(i);
+	public void onItemClick(AdapterView av, View v, int i, long l) {
+		Reponse rep = (Reponse)av.getItemAtPosition(i);
 		boolean gagne = rep.estBonne();
 
 		if(gagne) score++;
