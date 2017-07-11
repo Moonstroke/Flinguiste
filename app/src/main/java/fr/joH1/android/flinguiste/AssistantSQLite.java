@@ -410,8 +410,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		c.close();
 
 		// bonne réponse ajoutée aléatoirement dans l'ArrayList
-		int i = java.lang.Math.max(nb, n);
-		definitions.add(new java.util.Random().nextInt(i), new Reponse(true, bonneReponse));
+		// à un indice <= n, qui peut être inférieur à nb (si on a épuisé la BD notamment)
+		definitions.add(new java.util.Random().nextInt(n), new Reponse(true, bonneReponse));
 
 		return definitions;
 	}
