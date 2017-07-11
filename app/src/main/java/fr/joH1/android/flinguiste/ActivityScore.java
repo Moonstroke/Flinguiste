@@ -32,11 +32,12 @@ public class ActivityScore extends AppCompatActivity {
 		int total = donnees.getInt("t");
 		int niveau = donnees.getInt("n");
 		String nomNiveau = donnees.getString("N");
-		tvScore.setText(fprintf("« %s » : %d sur %d", nomNiveau, score, total));
+		String type = donnees.getString("T");
+		tvScore.setText(fprintf("« %s » : %d %s sur %d", nomNiveau, score, type, total));
 
-		ArrayList<String> mots = donnees.getStringArrayList("m");
-		Journal.debg(mots.toString());
-		lvScore.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mots));
+		ArrayList<String> questions = donnees.getStringArrayList("q");
+		Journal.debg(questions.toString());
+		lvScore.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, questions));
 
 		Journal.debg("zut alors");
 

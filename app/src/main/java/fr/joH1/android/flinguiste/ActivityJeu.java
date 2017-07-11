@@ -32,6 +32,11 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	private int niveau;
 
 	/**
+	 * Le type de la partie
+	 */
+	private int type;
+
+	/**
 	 * La question à laquelle on est rendu
 	 */
 	private int courant;
@@ -71,6 +76,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 
 		Bundle donnees = getIntent().getExtras();
 		niveau = donnees.getInt("n");
+		type = donnees.getInt("t");
 
 		mots = new ArrayList<>(total);
 		courant = 0;
@@ -133,6 +139,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();
+			mots.trimToSize();
 			finir();
 			return;
 		}
@@ -159,8 +166,9 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 		donnees.putInt("n", niveau);
 		donnees.putString("N", assistantSQLite.nomNiveau(niveau));
 		donnees.putInt("s", score);
-		donnees.putInt("t", courant); // peut être différent de total, si on a épuisé la BD avant l'heure
-		donnees.putStringArrayList("m", mots);
+		// 't' pour 'total', mais peut être différent de total, si on a épuisé la BD avant l'heure
+		donnees.putInt("t", courant);
+		donnees.putStringArrayList("q", mots);
 
 		setResult(Activity.RESULT_OK, new Intent().replaceExtras(donnees));
 		finish();

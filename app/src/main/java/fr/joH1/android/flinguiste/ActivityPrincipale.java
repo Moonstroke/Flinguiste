@@ -127,7 +127,9 @@ public class ActivityPrincipale extends AppCompatActivity {
 		if(codeResultat == Activity.RESULT_OK)
 			switch(codeRequete) {
 				case NV_PARTIE_EXPR_CODE:
+					donnees.putString("T", "expressions");
 				case NV_PARTIE_VOCAB_CODE:
+					donnees.putString("T", "mots");
 					startActivity(new Intent(this, ActivityScore.class).replaceExtras(donnees));
 					break;
 				default:
