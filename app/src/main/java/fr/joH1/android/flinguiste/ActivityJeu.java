@@ -127,17 +127,17 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 	 */
 	private void initQuestion() {
 
-		courant++;
 		String mot;
 		try {
 			mot = assistantSQLite.motAleat(niveau, mots);
-			mots.add(mot);
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();
 			finir();
 			return;
 		}
+		mots.add(mot);
+		courant++;
 
 		// TODO trouver un moyen de ne mettre à jour QUE le contenu de la liste et non tout l'adapteur
 		lvReponses.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
