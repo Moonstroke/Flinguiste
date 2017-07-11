@@ -144,6 +144,7 @@ public class ActivityPrincipale extends AppCompatActivity {
 		else if(code == NV_PARTIE_EXPR_CODE) {
 			donnees.putInt("n", niveauExpr);
 		}
+	donnees.putInt("t", code);
 	startActivityForResult(new Intent(this, ActivityJeu.class).replaceExtras(donnees), code);
 	}
 
