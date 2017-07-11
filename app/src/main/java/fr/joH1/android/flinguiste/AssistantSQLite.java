@@ -69,9 +69,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	/**
 	 * Enveloppe pour la méthode {@code {@link android.database.sqlite.SQLiteClosable#close() close}}
 	 */
-	void fermer() {
-		bd.close();
-	}
+	void fermer() { bd.close(); }
 
 
 	/**
@@ -149,13 +147,13 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return l'identifiant numérique de la ligne tout juste ajoutée
 	 */
 	int ajouterMot(String mot, int niveau, int type, String definition) {
-		ContentValues ligne = new ContentValues();
+		ContentValues ligne = new ContentValues(3);
 		ligne.put(COL_MOT, mot);
 		ligne.put(COL_ID_NIV, niveau);
 		ligne.put(COL_ID_TYPE, String.valueOf(type));
 
 		int id = (int)bd.insert(TABLE_MOT, null, ligne);
-		ligne = new ContentValues();
+		ligne = new ContentValues(3);
 		ligne.put(COL_DEF, definition);
 		ligne.put(COL_ID_TYPE, type);
 		ligne.put(COL_ID_MOT, id);
@@ -175,7 +173,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return l'identifiant numérique de la ligne tout juste ajoutée
 	 */
 	int ajouterDefinition(String definition, int type) {
-		ContentValues ligne = new ContentValues();
+		ContentValues ligne = new ContentValues(3);
 		ligne.put(COL_DEF, definition);
 		if(type >= 0) ligne.put(COL_TYPE, String.valueOf(type));
 		ligne.putNull(COL_ID_MOT);
@@ -184,7 +182,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	}
 
 	int ajouterDefinition(String definition) {
-		ContentValues ligne = new ContentValues();
+		ContentValues ligne = new ContentValues(2);
 		ligne.put(COL_DEF, definition);
 		ligne.putNull(COL_ID_MOT);
 
@@ -204,7 +202,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	private int ajouterNiveau(String niveau, int id) {
 
-		ContentValues ligne = new ContentValues();
+		ContentValues ligne = new ContentValues(2);
 		ligne.put(COL_NIV, niveau);
 		ligne.put(COL_ID_NIV, id);
 
@@ -223,7 +221,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	private int ajouterType(String type, int id) {
 
-		ContentValues ligne = new ContentValues();
+		ContentValues ligne = new ContentValues(2);
 		ligne.put(COL_TYPE, type);
 		ligne.put(COL_ID_TYPE, id);
 
