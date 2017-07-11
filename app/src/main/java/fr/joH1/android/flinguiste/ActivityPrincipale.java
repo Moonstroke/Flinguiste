@@ -124,17 +124,19 @@ public class ActivityPrincipale extends AppCompatActivity {
 		if(i == null) return;
 
 		Bundle donnees = i.getExtras();
-		if(codeResultat == Activity.RESULT_OK)
+		if(codeResultat == Activity.RESULT_OK) {
 			switch(codeRequete) {
 				case NV_PARTIE_EXPR_CODE:
 					donnees.putString("T", "expressions");
+					break;
 				case NV_PARTIE_VOCAB_CODE:
 					donnees.putString("T", "mots");
-					startActivity(new Intent(this, ActivityScore.class).replaceExtras(donnees));
 					break;
 				default:
-					break;
+					return;
 			}
+			startActivity(new Intent(this, ActivityScore.class).replaceExtras(donnees));
+		}
 	}
 
 
@@ -193,18 +195,14 @@ public class ActivityPrincipale extends AppCompatActivity {
 				 * @param l l'identifiant de la vue cliquée (inutile, en général)
 				 */
 				@Override
-				public void onItemSelected(AdapterView av, View v, int i, long l) {
-					niveauVocab = i;
-				}
+				public void onItemSelected(AdapterView av, View v, int i, long l) { niveauVocab = i; }
 
 				@Override public void onNothingSelected(AdapterView ll) {}
 			};
 		else if(typeJeu == NV_PARTIE_EXPR_CODE)
 			return new AdapterView.OnItemSelectedListener() {
 				@Override
-				public void onItemSelected(AdapterView av, View v, int i, long l) {
-					niveauExpr = i;
-				}
+				public void onItemSelected(AdapterView av, View v, int i, long l) { niveauExpr = i; }
 
 				@Override public void onNothingSelected(AdapterView ll) {}
 			};
