@@ -135,7 +135,7 @@ public class ActivityJeu extends AppCompatActivity implements AdapterView.OnItem
 
 		String mot;
 		try {
-			mot = assistantSQLite.motAleat(niveau, mots);
+			mot = assistantSQLite.motAleat(niveau, type, mots);
 		}
 		catch(AssistantSQLite.BaseEpuiseeException e) {
 			Toast.makeText(this, "Il n'y a pas assez de mots dans la base de données !", Toast.LENGTH_SHORT).show();

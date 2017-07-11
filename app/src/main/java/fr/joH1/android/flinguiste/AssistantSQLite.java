@@ -33,12 +33,15 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private static final String BD_NOM = "flinguiste.db";
 
 	private static final String TABLE_MOT = "Mot";
+	private static final String TABLE_EXPRESSION = "Expression";
 	private static final String TABLE_DEFINITION = "Definition";
 	private static final String TABLE_NIVEAU = "Niveau";
 	private static final String TABLE_TYPE = "Type";
 
 	private static final String COL_ID_MOT = "id_mot";
 	private static final String COL_MOT = "mot";
+	private static final String COL_ID_EXPR = "id_expr";
+	private static final String COL_EXPR = "expr";
 	private static final String COL_ID_TYPE = "id_type";
 	private static final String COL_TYPE = "type";
 	private static final String COL_ID_DEF = "id_def";
@@ -50,6 +53,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	private static final int NOM = 1;
 	private static final int ADJECTIF = 2;
 	private static final int VERBE = 3;
+	private static final int EXPRESSION = 4;
 
 	private static final int ALEATOIRE = 0;
 	private static final int FACILE = 1;
@@ -108,6 +112,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL, %s INTEGER %s NULL, %s INTEGER NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s))";
 		bd.execSQL(fprintf(sql, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
 		bd.execSQL(fprintf(sql, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, "DEFAULT", COL_ID_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
+		bd.execSQL(fprintf(sql, TABLE_EXPRESSION, COL_ID_EXPR, COL_EXPR, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
 	}
 
 
@@ -115,7 +120,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * Enveloppe également la création des tables, mais les efface d'abord.
 	 */
 	private void recreerTables() {
-		for(String t: new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_NIVEAU, TABLE_TYPE})
+		for(String t: new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_EXPRESSION, TABLE_NIVEAU, TABLE_TYPE})
 			bd.execSQL("DROP TABLE ?", new String[] {t});
 		creerTables();
 	}
@@ -150,12 +155,37 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		ContentValues ligne = new ContentValues(3);
 		ligne.put(COL_MOT, mot);
 		ligne.put(COL_ID_NIV, niveau);
-		ligne.put(COL_ID_TYPE, String.valueOf(type));
+		ligne.put(COL_ID_TYPE, type);
 
 		int id = (int)bd.insert(TABLE_MOT, null, ligne);
 		ligne = new ContentValues(3);
 		ligne.put(COL_DEF, definition);
 		ligne.put(COL_ID_TYPE, type);
+		ligne.put(COL_ID_MOT, id);
+
+		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
+	}
+
+	/**
+	 * Enveloppe l'ajout d'un mot dans la base de données.
+	 *
+	 * @param mot        le mot à ajouter
+	 * @param niveau     le niveau de ce mot
+	 * @param type       son type
+	 * @param definition et sa définition
+	 *
+	 * @return l'identifiant numérique de la ligne tout juste ajoutée
+	 */
+	int ajouterExpr(String mot, int niveau, int type, String definition) {
+		ContentValues ligne = new ContentValues(3);
+		ligne.put(COL_MOT, mot);
+		ligne.put(COL_ID_NIV, niveau);
+		ligne.put(COL_ID_TYPE, type);
+
+		int id = (int)bd.insert(TABLE_EXPRESSION, null, ligne);
+		ligne = new ContentValues(3);
+		ligne.put(COL_DEF, definition);
+		ligne.put(COL_ID_TYPE, EXPRESSION);
 		ligne.put(COL_ID_MOT, id);
 
 		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
@@ -282,6 +312,12 @@ class AssistantSQLite extends SQLiteOpenHelper {
 			ajouterMot("truchement", DIFFICILE, NOM, "fait de servir d'intermédiaire");
 
 
+			ajouterExpr("bayer aux corneilles", FACILE, 42, "ne rien faire");
+
+			ajouterExpr("tirer le diable par la queue", MOYEN, 42, "être pauvre");
+
+			ajouterExpr("suivre l'évangile des quenouilles", DIFFICILE, 42, "être un mari soumis à sa femme");
+
 			ajouterDefinition("42");
 			ajouterDefinition("la réponse D");
 			ajouterDefinition("mauvaise réponse");
@@ -349,9 +385,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return eh bien : le mot !
 	 */
-	String motAleat(int niveau, ArrayList<String> mots) throws BaseEpuiseeException {
-		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots))
-								: fprintf("SELECT %s FROM %s WHERE %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, TABLE_MOT, COL_MOT, listeSQL(mots));
+	String motAleat(int niveau, int type, ArrayList<String> mots) throws BaseEpuiseeException {
+		String table = type == 1 ? TABLE_MOT : type == 2 ? TABLE_MOT : null;
+		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, table, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots))
+								: fprintf("SELECT %s FROM %s WHERE %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, table, COL_MOT, listeSQL(mots));
 
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_MOT);
@@ -423,7 +460,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return une chaîne de {@code SQL} (valide)
 	 */
 	@NonNull
-	static String listeSQL(ArrayList<String> liste) {
+	private static String listeSQL(ArrayList<String> liste) {
 
 		int l = liste.size();
 		if(l == 0 || liste.get(0) == null) return "()";
