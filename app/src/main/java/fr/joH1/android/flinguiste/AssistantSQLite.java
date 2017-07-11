@@ -386,12 +386,13 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return eh bien : le mot !
 	 */
 	String motAleat(int niveau, int type, ArrayList<String> mots) throws BaseEpuiseeException {
-		String table = type == 1 ? TABLE_MOT : type == 2 ? TABLE_MOT : null;
-		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, table, COL_ID_NIV, niveau, COL_MOT, listeSQL(mots))
-								: fprintf("SELECT %s FROM %s WHERE %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_MOT, table, COL_MOT, listeSQL(mots));
+		String table = type == 1 ? TABLE_MOT : type == 2 ? TABLE_EXPRESSION : null;
+		String colonne = type == 1 ? COL_MOT : type == 2 ? COL_EXPR : null;
+		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", colonne, table, COL_ID_NIV, niveau, colonne, listeSQL(mots))
+								: fprintf("SELECT %s FROM %s WHERE %s NOT IN %s ORDER BY RANDOM() LIMIT 1", colonne, table, colonne, listeSQL(mots));
 
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
-		int col = c.getColumnIndexOrThrow(COL_MOT);
+		int col = c.getColumnIndexOrThrow(colonne);
 		c.moveToFirst();
 		String mot;
 		try {
@@ -480,7 +481,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		Journal.debg(bd.getPath());
 		SQLiteCursor c;
 		StringBuilder sb;
-		for(String t : new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_NIVEAU, TABLE_TYPE}) {
+		for(String t : new String[] {TABLE_TYPE, TABLE_NIVEAU, TABLE_MOT, TABLE_EXPRESSION, TABLE_DEFINITION}) {
 
 			c = (SQLiteCursor)bd.rawQuery("SELECT * FROM " + t, null);
 			int n = c.getColumnCount();
