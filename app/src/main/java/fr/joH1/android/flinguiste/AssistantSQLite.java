@@ -431,10 +431,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		if(l == 0 || liste.get(0) == null) return "()";
 
 		// On s'octroie 10 caractères par mot, en gros
-		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste.get(0)).append("'");
+		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste.get(0).replace("'", "''")).append("'");
 
 		for(int i = 1; i < l; ++i)
-			res.append(", '").append(liste.get(i)).append("'");
+			res.append(", '").append(liste.get(i).replace("'", "''")).append("'");
 		res.append(")");
 		return res.toString();
 	}
