@@ -32,33 +32,37 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 	private static final String BD_NOM = "flinguiste.db";
 
-	private static final String TABLE_MOT = "Mot";
-	private static final String TABLE_EXPRESSION = "Expression";
-	private static final String TABLE_DEFINITION = "Definition";
-	private static final String TABLE_NIVEAU = "Niveau";
 	private static final String TABLE_TYPE = "Type";
+	private static final String TABLE_NATURE = "Nature";
+	private static final String TABLE_NIVEAU = "Niveau";
+	private static final String TABLE_ENTREE = "Entree";
+	private static final String TABLE_DEFINITION = "Definition";
 
-	private static final String COL_ID_MOT = "id_mot";
-	private static final String COL_MOT = "mot";
-	private static final String COL_ID_EXPR = "id_expr";
-	private static final String COL_EXPR = "expr";
 	private static final String COL_ID_TYPE = "id_type";
 	private static final String COL_TYPE = "type";
-	private static final String COL_ID_DEF = "id_def";
-	private static final String COL_DEF = "def";
+	private static final String COL_ID_NAT = "id_nat";
+	private static final String COL_NATURE = "nature";
 	private static final String COL_ID_NIV = "id_niv";
-	private static final String COL_NIV = "niv";
+	private static final String COL_NIVEAU = "niveau";
+	private static final String COL_ID_ENT = "id_ent";
+	private static final String COL_ENTREE = "entree";
+	private static final String COL_ID_DEF = "id_def";
+	private static final String COL_DEFINITION = "definition";
 
+	// Type
+	public static final int MOT = 1;
+	public static final int EXPRESSION = 2;
 
-	private static final int NOM = 1;
-	private static final int ADJECTIF = 2;
-	private static final int VERBE = 3;
-	private static final int EXPRESSION = 4;
+	// Nature
+	public static final int NOM = 1;
+	public static final int ADJECTIF = 2;
+	public static final int VERBE = 3;
 
-	private static final int ALEATOIRE = 0;
-	private static final int FACILE = 1;
-	private static final int MOYEN = 2;
-	private static final int DIFFICILE = 3;
+	// Niveau
+	public static final int ALEATOIRE = 0;
+	public static final int FACILE = 1;
+	public static final int MOYEN = 2;
+	public static final int DIFFICILE = 3;
 
 
 	static final class BaseEpuiseeException extends Exception {}
@@ -84,8 +88,6 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase base) {
 		bd = base;
-		creerTables();
-		remplirBD();
 	}
 
 
@@ -101,94 +103,39 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 
 	/**
-	 * Enveloppe la création des tables, en supposant qu'elles n'existent pas déja.
-	 */
-	private void creerTables() {
-
-		String sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL)";
-		bd.execSQL(fprintf(sql, TABLE_TYPE, COL_ID_TYPE, COL_TYPE));
-		bd.execSQL(fprintf(sql, TABLE_NIVEAU, COL_ID_NIV, COL_NIV));
-
-		sql = "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT NOT NULL, %s INTEGER %s NULL, %s INTEGER NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s))";
-		bd.execSQL(fprintf(sql, TABLE_MOT, COL_ID_MOT, COL_MOT, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
-		bd.execSQL(fprintf(sql, TABLE_DEFINITION, COL_ID_DEF, COL_DEF, COL_ID_MOT, "DEFAULT", COL_ID_TYPE, COL_ID_MOT, TABLE_MOT, COL_ID_MOT, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
-		bd.execSQL(fprintf(sql, TABLE_EXPRESSION, COL_ID_EXPR, COL_EXPR, COL_ID_NIV, "NOT", COL_ID_TYPE, COL_ID_NIV, TABLE_NIVEAU, COL_ID_NIV, COL_ID_TYPE, TABLE_TYPE, COL_ID_TYPE));
-	}
-
-
-	/**
-	 * Enveloppe également la création des tables, mais les efface d'abord.
-	 */
-	private void recreerTables() {
-		for(String t: new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_EXPRESSION, TABLE_NIVEAU, TABLE_TYPE})
-			bd.execSQL("DROP TABLE ?", new String[] {t});
-		creerTables();
-	}
-
-
-	/**
-	 * Efface simplement le contenu de nos tables.
 	 *
-	 *@return le nombre de lignes supprimées, au total
-	 */
-	private int viderTables() {
-
-		int n = 0;
-		for(String t: new String[] {TABLE_DEFINITION, TABLE_MOT, TABLE_NIVEAU, TABLE_TYPE})
-			n += bd.delete(t, "1", null);
-
-		return n;
-	}
-
-
-	/**
-	 * Enveloppe l'ajout d'un mot dans la base de données.
+	 * @param entree     le texte de l'entrée à ajouter
+	 * @param type       son type,
+	 * @param nature     sa nature,
+	 * @param niveau     son niveau,
+	 * @param definition sa définition
 	 *
-	 * @param mot        le mot à ajouter
-	 * @param niveau     le niveau de ce mot
-	 * @param type       son type
-	 * @param definition et sa définition
-	 *
-	 * @return l'identifiant numérique de la ligne tout juste ajoutée
+	 * @return les deux numéros de ligne ajoutés (mot, définition)
 	 */
-	int ajouterMot(String mot, int niveau, int type, String definition) {
-		ContentValues ligne = new ContentValues(3);
-		ligne.put(COL_MOT, mot);
+	private int[] ajouterEntree(String entree, int type, int nature, int niveau, String definition) {
+		ContentValues ligne = new ContentValues(4);
+		ligne.put(COL_ENTREE, entree);
+		ligne.put(COL_ID_TYPE, type);
+		ligne.put(COL_ID_NAT, nature);
 		ligne.put(COL_ID_NIV, niveau);
-		ligne.put(COL_ID_TYPE, type);
 
-		int id = (int)bd.insert(TABLE_MOT, null, ligne);
-		ligne = new ContentValues(3);
-		ligne.put(COL_DEF, definition);
-		ligne.put(COL_ID_TYPE, type);
-		ligne.put(COL_ID_MOT, id);
+		int id_mot = (int)bd.insert(TABLE_ENTREE, null, ligne);
+		ligne = new ContentValues(2);
+		ligne.put(COL_DEFINITION, definition);
+		ligne.put(COL_ID_ENT, id_mot);
 
-		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
+		int id_def = (int)bd.insert(TABLE_DEFINITION, null, ligne);
+
+		return new int[] {id_mot, id_def};
 	}
 
-	/**
-	 * Enveloppe l'ajout d'un mot dans la base de données.
-	 *
-	 * @param mot        le mot à ajouter
-	 * @param niveau     le niveau de ce mot
-	 * @param type       son type
-	 * @param definition et sa définition
-	 *
-	 * @return l'identifiant numérique de la ligne tout juste ajoutée
-	 */
-	int ajouterExpr(String mot, int niveau, int type, String definition) {
-		ContentValues ligne = new ContentValues(3);
-		ligne.put(COL_MOT, mot);
-		ligne.put(COL_ID_NIV, niveau);
-		ligne.put(COL_ID_TYPE, type);
 
-		int id = (int)bd.insert(TABLE_EXPRESSION, null, ligne);
-		ligne = new ContentValues(3);
-		ligne.put(COL_DEF, definition);
-		ligne.put(COL_ID_TYPE, EXPRESSION);
-		ligne.put(COL_ID_MOT, id);
+	int[] ajouterMot(String mot, int niveau, int nature, String definition) {
+		return ajouterEntree(mot, MOT, niveau, nature, definition);
+	}
 
-		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
+	int[] ajouterExpr(String expression, int niveau, int nature, String definition) {
+		return ajouterEntree(expression, EXPRESSION, nature, niveau, definition);
 	}
 
 
@@ -197,141 +144,14 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * la probabilité de tomber sur les mêmes définitions plusieurs fois.
 	 *
 	 * @param definition la définition à ajouter
-	 * @param type       le type de cette définition (pour éviter que le jeu nous propose
- 	 *                   des verbes quand le mot est un substantif, par exemple
 	 *
 	 * @return l'identifiant numérique de la ligne tout juste ajoutée
 	 */
-	int ajouterDefinition(String definition, int type) {
-		ContentValues ligne = new ContentValues(3);
-		ligne.put(COL_DEF, definition);
-		if(type >= 0) ligne.put(COL_TYPE, String.valueOf(type));
-		ligne.putNull(COL_ID_MOT);
-
-		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
-	}
-
 	int ajouterDefinition(String definition) {
-		ContentValues ligne = new ContentValues(2);
-		ligne.put(COL_DEF, definition);
-		ligne.putNull(COL_ID_MOT);
+		ContentValues ligne = new ContentValues(1);
+		ligne.put(COL_DEFINITION, definition);
 
 		return (int)bd.insert(TABLE_DEFINITION, null, ligne);
-	}
-
-
-	/**
-	 * Ajoute un niveau.
-	 *
-	 * TODO voir si à déprécier ou non (pas très utile, après tout)
-	 *
-	 * @param niveau l'intitulé du niveau
-	 * @param id     l'identifiant (optionnel) du niveau
-	 *
-	 * @return l'identifiant numérique de la ligne tout juste ajoutée
-	 */
-	private int ajouterNiveau(String niveau, int id) {
-
-		ContentValues ligne = new ContentValues(2);
-		ligne.put(COL_NIV, niveau);
-		ligne.put(COL_ID_NIV, id);
-
-		return (int)bd.insert(TABLE_NIVEAU, null, ligne);
-	}
-
-	/**
-	 * Ajoute un type.
-	 *
-	 * TODO comme pour {@code #ajouterNiveau}, voir si à déprécier ou non
-	 *
-	 * @param type l'intitulé du niveau
-	 * @param id     l'identifiant du niveau
-	 *
-	 * @return l'identifiant numérique de la ligne tout juste ajoutée
-	 */
-	private int ajouterType(String type, int id) {
-
-		ContentValues ligne = new ContentValues(2);
-		ligne.put(COL_TYPE, type);
-		ligne.put(COL_ID_TYPE, id);
-
-		return (int)bd.insert(TABLE_TYPE, null, ligne);
-	}
-
-
-	/**
-	 * Remplit les tables de la base de données avec un panel de mots, soigneusement choisis par
-	 * votre humble serviteur-codeur.
-	 */
-	private void remplirBD() {
-
-		bd.beginTransaction();
-		try {
-			// Pas véritablement un niveau de jeu, renvoie un mot de n'importe quel type
-			ajouterNiveau("Aléatoire", ALEATOIRE);
-
-			ajouterNiveau("Cultivé", FACILE);
-			ajouterNiveau("Connaisseur", MOYEN);
-			ajouterNiveau("Omniscient", DIFFICILE);
-
-
-			ajouterType("Nom", NOM);
-			ajouterType("Adjectif", ADJECTIF);
-			ajouterType("Verbe", VERBE);
-
-
-			ajouterMot("céphalée", FACILE, NOM, "migraine");
-			ajouterMot("équipollent", FACILE, ADJECTIF, "équivalent");
-			ajouterMot("hirsute", FACILE, ADJECTIF, "au pelage hérissé et sale");
-			ajouterMot("nyctalope", FACILE, ADJECTIF, "qui peut voir dans l'obscurité");
-			ajouterMot("plébiscité", FACILE, ADJECTIF, "apprécié par la majorité populaire");
-			ajouterMot("recrudescence", FACILE, NOM, "retour de quelque chose en plus fort qu'avant");
-			ajouterMot("stochastique", FACILE, ADJECTIF, "aléatoire");
-			ajouterMot("véhémence", FACILE, NOM, "comportement violent");
-			ajouterMot("vestibule", FACILE, NOM, "couloir d'accès");
-			ajouterMot("tergiverser", FACILE, VERBE, "tourner autour du pot");
-
-			ajouterMot("badinage", MOYEN, NOM, "futilité plaisante, ou plaisanterie futile");
-			ajouterMot("crécelle", MOYEN, NOM, "instrument au son désagréable");
-			ajouterMot("miasme", MOYEN, NOM, "émanation fétide de corps décomposés");
-			ajouterMot("pléthore", MOYEN, NOM, "grande quantité");
-			ajouterMot("procrastiner", MOYEN, VERBE, "toujours remettre au lendemain");
-			ajouterMot("pugilat", MOYEN, NOM, "bagarre à coups de poings");
-			ajouterMot("superfétatoire", MOYEN, ADJECTIF, "superflu");
-			ajouterMot("truculent", MOYEN, ADJECTIF, "pittoresque");
-
-			ajouterMot("ambage", DIFFICILE, NOM, "hésitation à s'exprimer");
-			ajouterMot("attrition", DIFFICILE, NOM, "diminution naturelle d'une quantité de choses ou de personnes");
-			ajouterMot("cuniculiculture", DIFFICILE, NOM, "l'élevage de petits lapins");
-			ajouterMot("icoglan", DIFFICILE, NOM, "petit page du Sultan");
-			ajouterMot("innutrition", DIFFICILE, NOM, "fait de s'approprier (involotairement) les idées d'un autre");
-			ajouterMot("maroufle", DIFFICILE, NOM, "femelle du gnou");
-			ajouterMot("pétrichor", DIFFICILE, NOM, "l'odeur de la terre après la pluie");
-			ajouterMot("phylactère", DIFFICILE, NOM, "bulle de bande dessinée");
-			ajouterMot("sérendipité", DIFFICILE, NOM, "fait de faire des découvertes par hasard");
-			ajouterMot("truchement", DIFFICILE, NOM, "fait de servir d'intermédiaire");
-
-
-			ajouterExpr("bayer aux corneilles", FACILE, 42, "ne rien faire");
-
-			ajouterExpr("tirer le diable par la queue", MOYEN, 42, "être pauvre");
-
-			ajouterExpr("suivre l'évangile des quenouilles", DIFFICILE, 42, "être un mari soumis à sa femme");
-
-			ajouterDefinition("42");
-			ajouterDefinition("la réponse D");
-			ajouterDefinition("mauvaise réponse");
-
-			// HYPER IMPORTANT
-			// si on l'oublie, `endTransaction()` annule toutes les actions depuis le début !
-			bd.setTransactionSuccessful();
-		}
-		catch(SQLiteException e) {
-			Journal.err("Erreur SQLite : " + e.getMessage());
-		}
-		finally {
-			bd.endTransaction();
-		}
 	}
 
 
@@ -342,8 +162,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	SQLiteCursor niveaux(String colNiveau, boolean inclureZero) {
 
-		String sql = inclureZero ? fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU)
-								 : fprintf("SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIV, colNiveau, TABLE_NIVEAU, COL_NIV);
+		String sql = inclureZero ? fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIVEAU, colNiveau, TABLE_NIVEAU)
+								 : fprintf("SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIVEAU, colNiveau, TABLE_NIVEAU, COL_NIVEAU);
 
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
@@ -357,8 +177,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	String nomNiveau(int n) {
 		String niveau;
-		try(SQLiteCursor c = (SQLiteCursor)bd.rawQuery(fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIV, TABLE_NIVEAU, COL_ID_NIV, n), null)) {
-			niveau = c.moveToFirst() ? c.getString(c.getColumnIndex(COL_NIV)) : null;
+		try(SQLiteCursor c = (SQLiteCursor)bd.rawQuery(fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIVEAU, TABLE_NIVEAU, COL_ID_NIV, n), null)) {
+			niveau = c.moveToFirst() ? c.getString(c.getColumnIndex(COL_NIVEAU)) : null;
 		}
 		return niveau;
 	}
@@ -385,14 +205,12 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return eh bien : le mot !
 	 */
-	String motAleat(int niveau, int type, ArrayList<String> mots) throws BaseEpuiseeException {
-		String table = type == 1 ? TABLE_MOT : type == 2 ? TABLE_EXPRESSION : null;
-		String colonne = type == 1 ? COL_MOT : type == 2 ? COL_EXPR : null;
-		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", colonne, table, COL_ID_NIV, niveau, colonne, listeSQL(mots))
-								: fprintf("SELECT %s FROM %s WHERE %s NOT IN %s ORDER BY RANDOM() LIMIT 1", colonne, table, colonne, listeSQL(mots));
+	String entreeAleat(int niveau, int type, ArrayList<String> mots) throws BaseEpuiseeException {
+		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %d = %d AND %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_ENTREE, TABLE_ENTREE, COL_ID_TYPE, type, COL_ID_NIV, niveau, COL_ENTREE, listeSQL(mots))
+								: fprintf("SELECT %s FROM %s WHERE %d = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_ENTREE, TABLE_ENTREE, COL_ID_TYPE, type, COL_ENTREE, listeSQL(mots));
 
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
-		int col = c.getColumnIndexOrThrow(colonne);
+		int col = c.getColumnIndexOrThrow(COL_ENTREE);
 		c.moveToFirst();
 		String mot;
 		try {
@@ -414,40 +232,42 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * Conçue pour être appelée après {@code motAleat}, avec le mot que cette méthode a retourné.
 	 *
-	 * @param mot le mot
-	 * @param nb  le nombre de {@code Reponse}s à renvoyer
+	 * @param entree le mot
+	 * @param nombre  le nombre de {@code Reponse}s à renvoyer
 	 *
+	 * TODO passer par l'identifiant numérique de l'entrée, plutôt que son texte
 	 * @return la liste sus-mentionnée
 	 */
-	ArrayList<Reponse> propositions(String mot, int nb) {
+	ArrayList<Reponse> propositions(String entree, int nombre) {
 
-		ArrayList<Reponse> definitions = new ArrayList<>(nb);
+		ArrayList<Reponse> definitions = new ArrayList<>(nombre);
 
+		String ent = echapperSQL(entree);
 		// sélection de la bonne réponse
-		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' LIMIT 1", COL_ID_DEF, COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot);
+		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' LIMIT 1", COL_ID_DEF, COL_DEFINITION, TABLE_ENTREE, TABLE_DEFINITION, COL_ENTREE, ent);
 
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		c.moveToFirst();
-		String bonneReponse = c.getString(c.getColumnIndexOrThrow(COL_DEF));
+		String bonneReponse = c.getString(c.getColumnIndexOrThrow(COL_DEFINITION));
 		int idBonneRep = c.getInt(c.getColumnIndexOrThrow(COL_ID_DEF));
 		c.close();
 
 		// mauvaises réponses en ordre aléatoire
-		String sousRequete = fprintf("SELECT %s FROM %s WHERE %s = '%s'", COL_ID_TYPE, TABLE_MOT, COL_MOT, mot);
-		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d AND %s IN (0, (%s)) ORDER BY RANDOM() LIMIT %d", COL_DEF, TABLE_MOT, TABLE_DEFINITION, COL_MOT, mot, COL_ID_DEF, idBonneRep, COL_ID_TYPE, sousRequete, nb - 1);
+		String sousRequete = fprintf("SELECT %s FROM %s WHERE %s = '%s'", COL_ID_TYPE, TABLE_ENTREE, COL_ENTREE, entree);
+		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d AND %s IN (0, (%s)) ORDER BY RANDOM() LIMIT %d", COL_DEFINITION, TABLE_ENTREE, TABLE_DEFINITION, COL_ENTREE, ent, COL_ID_DEF, idBonneRep, COL_ID_TYPE, sousRequete, nombre - 1);
 
 		c = (SQLiteCursor)bd.rawQuery(sql, null);
-		int col = c.getColumnIndexOrThrow(COL_DEF);
-		int n = 0; // le nombre effectif de lignes trouvé
+		int col = c.getColumnIndexOrThrow(COL_DEFINITION);
+		int nb = 0; // le nombre effectif de lignes trouvé
 		while(c.moveToNext()) {
 			definitions.add(new Reponse(false, c.getString(col)));
-			n++;
+			nb++;
 		}
 		c.close();
 
 		// bonne réponse ajoutée aléatoirement dans l'ArrayList
-		// à un indice <= n, qui peut être inférieur à nb (si on a épuisé la BD notamment)
-		definitions.add(new java.util.Random().nextInt(n), new Reponse(true, bonneReponse));
+		// à un indice < nb, 'nb' qui peut être inférieur à 'nombre' (si on a épuisé la BD notamment)
+		definitions.add(new java.util.Random().nextInt(nb), new Reponse(true, bonneReponse));
 
 		return definitions;
 	}
@@ -467,11 +287,21 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		if(l == 0 || liste.get(0) == null) return "()";
 
 		// On s'octroie 10 caractères par mot, en gros
-		StringBuilder res = new StringBuilder(l * 12).append("('").append(liste.get(0).replace("'", "''")).append("'");
+		StringBuilder res = new StringBuilder(l * 12).append("('").append(echapperSQL(liste.get(0))).append("'");
 
 		for(int i = 1; i < l; ++i)
-			res.append(", '").append(liste.get(i).replace("'", "''")).append("'");
+			res.append(", '").append(echapperSQL(liste.get(i))).append("'");
 		res.append(")");
+		return res.toString();
+	}
+
+	private static String echapperSQL(String texte) {
+		// on part du postulat qu'il n'y aura pas plus de quatre apostrophes dans le texte
+		StringBuilder res = new StringBuilder(texte.length() + 4);
+		for(char c : texte.toCharArray()) {
+			if(c == '\'') res.append('\'');
+			res.append(c);
+		}
 		return res.toString();
 	}
 
@@ -481,7 +311,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		Journal.debg(bd.getPath());
 		SQLiteCursor c;
 		StringBuilder sb;
-		for(String t : new String[] {TABLE_TYPE, TABLE_NIVEAU, TABLE_MOT, TABLE_EXPRESSION, TABLE_DEFINITION}) {
+		for(String t : new String[] {TABLE_TYPE, TABLE_NATURE, TABLE_NIVEAU, TABLE_ENTREE, TABLE_DEFINITION}) {
 
 			c = (SQLiteCursor)bd.rawQuery("SELECT * FROM " + t, null);
 			int n = c.getColumnCount();
