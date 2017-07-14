@@ -14,7 +14,6 @@
 
 	<!-- Ajout d'une définition -->
 	<android.support.v7.widget.AppCompatTextView style="@style/titre" android:text="@string/texte_aj_def" />
-	<Spinner android:id="@+id/s_aj_def_type" style="@style/ligne2"/>
 	<android.support.v7.widget.AppCompatEditText android:id="@+id/et_aj_def_def" style="@style/ligne" android:hint="@string/astuce_aj_def"/>
 	<android.support.v7.widget.AppCompatButton style="@style/ligne2" android:text="@string/ajouter" android:onClick="ajDef"/>
 

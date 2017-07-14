@@ -73,10 +73,9 @@ public class ActivityGestionBD extends AppCompatActivity {
 	}
 
 	public void ajDef(View v) {
-		int type = sAjDefType.getSelectedItemPosition() + 1;
 		String def = String.valueOf(etAjDefDef.getText());
 
-		if(def.length() != 0) assistantSQLite.ajouterDefinition(def, type);
+		if(def.length() != 0) assistantSQLite.ajouterDefinition(def);
 	}
 
 }
