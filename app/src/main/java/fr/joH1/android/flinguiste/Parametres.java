@@ -66,6 +66,6 @@ class Parametres {
 	 * @return la chaîne de caractères entrée formatée avec les arguments
 	 */
 	static String fprintf(String s, Object... args) {
-		return new java.util.Formatter(java.util.Locale.US).format(s, args).toString();
+		return new java.util.Formatter(java.util.Locale.FRENCH).format(s, args).toString();
 	}
 }
