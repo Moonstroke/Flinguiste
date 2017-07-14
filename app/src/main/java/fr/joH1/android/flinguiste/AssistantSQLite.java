@@ -162,8 +162,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	SQLiteCursor niveaux(String colNiveau, boolean inclureZero) {
 
-		String sql = inclureZero ? fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_NIV, COL_NIVEAU, colNiveau, TABLE_NIVEAU)
-								 : fprintf("SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_NIV, COL_NIVEAU, colNiveau, TABLE_NIVEAU, COL_NIVEAU);
+		String sql = fprintf(inclureZero ? "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id"
+										 : "SELECT %s AS _id, %s AS %s FROM %s WHERE %1$s > 0 ORDER BY _id",
+							 COL_ID_NIV, COL_NIVEAU, colNiveau, TABLE_NIVEAU);
+		Journal.debg("requête niveaux : " + sql);
 
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
@@ -177,7 +179,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	String nomNiveau(int n) {
 		String niveau;
-		try(SQLiteCursor c = (SQLiteCursor)bd.rawQuery(fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIVEAU, TABLE_NIVEAU, COL_ID_NIV, n), null)) {
+		String sql = fprintf("SELECT %s FROM %s WHERE %s = %d LIMIT 1", COL_NIVEAU, TABLE_NIVEAU, COL_ID_NIV, n);
+		Journal.debg("requête nom niveau : " + sql);
+
+		try(SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null)) {
 			niveau = c.moveToFirst() ? c.getString(c.getColumnIndex(COL_NIVEAU)) : null;
 		}
 		return niveau;
@@ -189,8 +194,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 */
 	SQLiteCursor types(String colType, boolean inclureZero) {
 
-		String sql = inclureZero ? fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE)
-								 : fprintf("SELECT %s AS _id, %s AS %s FROM %s WHERE %s > 0 ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE, COL_TYPE);
+		String sql = fprintf(inclureZero ? "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id"
+										 : "SELECT %s AS _id, %s AS %s FROM %s WHERE %2$s > 0 ORDER BY _id",
+							 COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE);
 
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
@@ -206,8 +212,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 * @return eh bien : le mot !
 	 */
 	String entreeAleat(int niveau, int type, ArrayList<String> mots) throws BaseEpuiseeException {
-		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %d = %d AND %s = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_ENTREE, TABLE_ENTREE, COL_ID_TYPE, type, COL_ID_NIV, niveau, COL_ENTREE, listeSQL(mots))
-								: fprintf("SELECT %s FROM %s WHERE %d = %d AND %s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_ENTREE, TABLE_ENTREE, COL_ID_TYPE, type, COL_ENTREE, listeSQL(mots));
+		String sql = niveau > 0 ? fprintf("SELECT %s FROM %s WHERE %s = %d AND %s = %d AND %1$s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_ENTREE, TABLE_ENTREE, COL_ID_TYPE, type, COL_ID_NIV, niveau, listeSQL(mots))
+								: fprintf("SELECT %s FROM %s WHERE %s = %d AND %1$s NOT IN %s ORDER BY RANDOM() LIMIT 1", COL_ENTREE, TABLE_ENTREE, COL_ID_TYPE, type, listeSQL(mots));
+		Journal.debg("requête entrée aléatoire : " + sql);
 
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_ENTREE);
@@ -244,7 +251,8 @@ class AssistantSQLite extends SQLiteOpenHelper {
 
 		String ent = echapperSQL(entree);
 		// sélection de la bonne réponse
-		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' LIMIT 1", COL_ID_DEF, COL_DEFINITION, TABLE_ENTREE, TABLE_DEFINITION, COL_ENTREE, ent);
+		String sql = fprintf("SELECT %s, %s FROM %s NATURAL JOIN %s WHERE %s = '%s' LIMIT 1", COL_ID_DEF, COL_DEFINITION, TABLE_DEFINITION, TABLE_ENTREE, COL_ENTREE, ent);
+		Journal.debg("requête bonne réponse :" + sql);
 
 		SQLiteCursor c = (SQLiteCursor)bd.rawQuery(sql, null);
 		c.moveToFirst();
@@ -253,8 +261,9 @@ class AssistantSQLite extends SQLiteOpenHelper {
 		c.close();
 
 		// mauvaises réponses en ordre aléatoire
-		String sousRequete = fprintf("SELECT %s FROM %s WHERE %s = '%s'", COL_ID_TYPE, TABLE_ENTREE, COL_ENTREE, entree);
-		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL JOIN %s WHERE %s <> '%s' AND %s <> %d AND %s IN (0, (%s)) ORDER BY RANDOM() LIMIT %d", COL_DEFINITION, TABLE_ENTREE, TABLE_DEFINITION, COL_ENTREE, ent, COL_ID_DEF, idBonneRep, COL_ID_TYPE, sousRequete, nombre - 1);
+		String sousRequete = fprintf("SELECT %s FROM %s WHERE %s = '%s'", COL_ID_TYPE, TABLE_ENTREE, COL_ENTREE, ent);
+		sql = fprintf("SELECT DISTINCT %s FROM %s NATURAL LEFT JOIN %s WHERE %s <> %d AND ((%s <> '%s' AND %s = (%s)) OR %6$s IS NULL) ORDER BY RANDOM() LIMIT %d", COL_DEFINITION, TABLE_DEFINITION, TABLE_ENTREE, COL_ID_DEF, idBonneRep, COL_ENTREE, ent, COL_ID_TYPE, sousRequete, nombre - 1);
+		Journal.debg("requête mauvaises réponses : " + sql);
 
 		c = (SQLiteCursor)bd.rawQuery(sql, null);
 		int col = c.getColumnIndexOrThrow(COL_DEFINITION);
