@@ -19,6 +19,16 @@ import android.widget.Spinner;
  * @author joH1
  *
  */
+
+/* IDÉES
+ * nouveau type de jeu : trouver la définition qui ne correspond PAS au mot proposé
+ *
+ * passer par un int[] pour les mots, chaque élément ID du mot et signe indique si trouvé ou pas :
+ *     mots[i] = gagne ? id : -id;
+ *
+ * intégrer à l'APK un fichier .db qui contient déjà toutes les données
+ */
+
 public class ActivityPrincipale extends AppCompatActivity {
 
 	private AssistantSQLite assistantSQLite;
