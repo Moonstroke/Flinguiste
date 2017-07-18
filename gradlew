@@ -10,13 +10,27 @@
 DEFAULT_JVM_OPTS=""
 
 APP_NAME="Gradle"
-APP_BASE_NAME=$(basename "$0")
+APP_BASE_NAME="$(basename "$0")"
+
+
+script_bd=${0%/*}/lancer_SQL.sh
+
+# Avant toute chose, on compile la base de données
+if [ -x "$script_bd" ]
+then
+	$script_bd
+elif [-e "$script_bd" ] # solution de repli si le script n'est pas exécutable : on le lance dans un sous-shell
+then
+	(bash $script_bd)
+else
+	die "Script $script_bd non trouvé"
+fi
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD="maximum"
 
 warn() {
-	echo "$*"
+	printf "$*\n"
 }
 
 die() {
@@ -129,9 +143,8 @@ if $cygwin ; then
 		if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
 			eval args$i=cygpath --path --ignore --mixed "$arg"
 		else
-			eval args$i="\"$arg\""
+			eval args$((i++))="\"$arg\""
 		fi
-		i=$((i+1))
 	done
 	case $i in
 		(0) set -- ;;
