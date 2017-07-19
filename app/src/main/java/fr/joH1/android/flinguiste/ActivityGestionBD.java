@@ -50,7 +50,7 @@ public class ActivityGestionBD extends AppCompatActivity {
 		sAjMotNiv.setPrompt(ressources.getString(R.string.texte_aj_mot_niv));
 
 		String colType = "type";
-		SimpleCursorAdapter adaptateurTypes = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType, false), new String[] {colType}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		SimpleCursorAdapter adaptateurTypes = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item, assistantSQLite.types(colType), new String[] {colType}, new int[] {android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		adaptateurTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 		sAjMotType.setAdapter(adaptateurTypes);

@@ -175,7 +175,7 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @param n l'identifiant numérique de la colonne à retourner
 	 *
-	 * @return le nom de la colonne associée à n (on aura compris)
+	 * @return le nom de la colonne associée à n (on aura compris !)
 	 */
 	String nomNiveau(int n) {
 		String niveau;
@@ -192,11 +192,10 @@ class AssistantSQLite extends SQLiteOpenHelper {
 	 *
 	 * @return ce fameux curseur !
 	 */
-	SQLiteCursor types(String colType, boolean inclureZero) {
+	SQLiteCursor types(String colType) {
 
-		String sql = fprintf(inclureZero ? "SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id"
-										 : "SELECT %s AS _id, %s AS %s FROM %s WHERE %2$s > 0 ORDER BY _id",
-							 COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE);
+		String sql = fprintf("SELECT %s AS _id, %s AS %s FROM %s ORDER BY _id", COL_ID_TYPE, COL_TYPE, colType, TABLE_TYPE);
+		Journal.debg("requête types : " + sql);
 
 		return (SQLiteCursor)bd.rawQuery(sql, null);
 	}
