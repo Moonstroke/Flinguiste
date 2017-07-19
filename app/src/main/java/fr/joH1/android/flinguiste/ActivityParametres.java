@@ -64,7 +64,7 @@ public class ActivityParametres extends AppCompatActivity {
 		});
 	}
 
-	public void gestionBD(View v) {
+	public void gererBD(View v) {
 		startActivityForResult(new Intent(getApplicationContext(), ActivityGestionBD.class), -1, null);
 	}
 

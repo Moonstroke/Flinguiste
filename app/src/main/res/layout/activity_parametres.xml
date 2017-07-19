@@ -15,6 +15,6 @@
 	</android.support.v7.widget.LinearLayoutCompat>
 
 	<!-- Lancer l'Activity qui s'occupe de tout ce qui a trait à la base de données -->
-	<android.support.v7.widget.AppCompatButton style="@style/ligne" android:layout_gravity="bottom" android:text="@string/gestion_bd" android:onClick="gestionBD"/>
+	<android.support.v7.widget.AppCompatButton style="@style/ligne" android:layout_gravity="bottom" android:text="@string/gestion_bd" android:onClick="gererBD"/>
 
 </android.support.v7.widget.LinearLayoutCompat>
