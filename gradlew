@@ -15,13 +15,15 @@ APP_BASE_NAME="$(basename "$0")"
 
 script_bd=${0%/*}/lancer_SQL.sh
 
+arg="recreer" # Supprime toutes les tables, les recrée et les remplit (autre valeur : "reremplir" pour ne pas supprimer les tables)
+
 # Avant toute chose, on compile la base de données
 if [ -x "$script_bd" ]
 then
-	$script_bd
+	$script_bd $arg
 elif [-e "$script_bd" ] # solution de repli si le script n'est pas exécutable : on le lance dans un sous-shell
 then
-	(bash $script_bd)
+	(bash $script_bd $arg)
 else
 	die "Script $script_bd non trouvé"
 fi
