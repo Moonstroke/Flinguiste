@@ -22,7 +22,6 @@
 	<string name="ajouter">Ajouter</string>
 	<string name="texte_aj_def">Ajouter une définition</string>
 	<string name="astuce_aj_def">Entrer ici la définition</string>
-	<string name="texte_aj_def_type">Choisir un type pour la définition</string>
 
 	<string name="acti_jeu">Partie en cours</string>
 	<string name="suivant">Suivant</string>

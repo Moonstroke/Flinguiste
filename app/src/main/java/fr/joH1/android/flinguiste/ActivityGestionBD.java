@@ -22,7 +22,6 @@ public class ActivityGestionBD extends AppCompatActivity {
 	private AppCompatEditText etAjMotMot;
 	private AppCompatEditText etAjMotDef;
 
-	private Spinner sAjDefType;
 	private AppCompatEditText etAjDefDef;
 
 
@@ -39,7 +38,6 @@ public class ActivityGestionBD extends AppCompatActivity {
 		etAjMotMot = (AppCompatEditText)findViewById(R.id.et_aj_mot_mot);
 		etAjMotDef = (AppCompatEditText)findViewById(R.id.et_aj_mot_def);
 
-		sAjDefType = (Spinner)findViewById(R.id.s_aj_def_type);
 		etAjDefDef = (AppCompatEditText)findViewById(R.id.et_aj_def_def);
 
 
@@ -57,10 +55,6 @@ public class ActivityGestionBD extends AppCompatActivity {
 
 		sAjMotType.setAdapter(adaptateurTypes);
 		sAjMotType.setPrompt(ressources.getString(R.string.texte_aj_mot_type));
-
-		sAjDefType.setAdapter(adaptateurTypes);
-		sAjDefType.setPrompt(ressources.getString(R.string.texte_aj_def_type));
-
 	}
 
 	public void ajMot(View v) {
