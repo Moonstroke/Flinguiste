@@ -34,7 +34,7 @@ INSERT INTO Nature (id_nat, id_type, nature) VALUES
 	(3, 2, 'locution');
 
 
-.shell echo "entree"
+.shell echo "entrée"
 
 INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 	('acabit', 1, 1, 1),
@@ -42,6 +42,7 @@ INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 	('burlesque', 1, 2, 1),
 	('cadastre', 1, 1, 1),
 	('céphalée', 1, 1, 1),
+	('chicane', 1, 1, 1),
 	('coquille', 1, 1, 1),
 	('courroux', 1, 2, 1),
 	('dérisoire', 1, 2, 1),
@@ -57,6 +58,7 @@ INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 	('hirsute', 1, 2, 1),
 	('incongru', 1, 2, 1),
 	('insatiable', 1, 2, 1),
+	('jargon', 1, 1, 1),
 	('ladre', 1, 1, 1),
 	('moyeu', 1, 1, 1),
 	('nyctalope', 1, 2, 1),
@@ -129,6 +131,7 @@ INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 	('retable', 1, 1, 2),
 	('s''esclaffer', 1, 3, 2),
 	('solive', 1, 1, 2),
+	('stupre', 1, 1, 2),
 	('superfétatoire', 1, 2, 2),
 	('tarauder', 1, 3, 2),
 	('thaumaturge', 1, 2, 2),
@@ -173,8 +176,10 @@ INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 	('vilipender', 1, 3, 3),
 
 
+	('à brûle-pourpoint', 2, 2, 1),
 	('aimable comme une porte de prison', 2, 2, 1),
 	('avoir la tête dans le pâté', 2, 3, 1),
+	('avoir une araignée au plafond', 2, 3, 1),
 	('bayer aux corneilles', 2, 3, 1),
 	('croiser le fer', 2, 3, 1),
 	('du coq à l''âne', 2, 2, 1),
@@ -192,14 +197,18 @@ INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 	('peigner la girafe', 2, 3, 1),
 	('pincer la bulle', 2, 3, 1),
 	('retourner sa veste', 2, 3, 1),
+	('s''emmeler les pinceaux', 2, 3, 1),
 	('sans queue ni tête', 2, 2, 1),
+	('se marcher sur les pieds', 2,, 3, 1),
 	('tenir la chandelle', 2, 3, 1),
 	('tirer les vers du nez', 2, 3, 1),
 	('tourner autour du pot', 2, 3, 1),
 
 	('avoir le feu au plancher', 2, 3, 2),
 	('avoir plus d''une corde à son arc', 2, 3, 2),
+	('bille en tête', 2, 2, 2),
 	('brûler la chandelle par les deux bouts', 2, 3, 2),
+	('de but en blanc', 2, 2, 2),
 	('déshabiller Pierre pour habiller Paul', 2, 3, 2),
 	('être sauvé par le gong', 2, 3, 2),
 	('faire flèche de tout bois', 2, 3, 2),
@@ -230,7 +239,7 @@ INSERT INTO Entree (entree, id_type, id_nat, id_niv) VALUES
 ;
 
 
-.shell echo "definition"
+.shell echo "définition"
 
 INSERT INTO Definition (definition) VALUES
 	('42'),
