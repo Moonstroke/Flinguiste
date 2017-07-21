@@ -2,7 +2,7 @@
 
 d="${0%/*}" # <=> "$(dirname $0)"
 
-assets="$d/app/src/main/assets"
+doss_bd="$d/app/src/main/assets/databases"
 nom_bd="flinguiste.db"
 schema="$d/sql/flinguiste_schéma.sql"
 donnees="$d/sql/flinguiste_données.sql"
@@ -28,7 +28,7 @@ executer() {
 }
 
 
-touch "$assets/$nom_bd" || mourir "Impossible de créer le fichier \"$assets/$nom_bd\"" 3
+touch "$doss_bd/$nom_bd" || mourir "Impossible de créer le fichier \"$doss_bd/$nom_bd\"" 3
 
 if [ -n "$(which sqlite3)" ]
 then
@@ -45,10 +45,10 @@ fi
 
 if [ "$1" = "recreer" ]
 then
-	executer $sqlite_x "$assets/$nom_bd" $schema $donnees
+	executer $sqlite_x "$doss_bd/$nom_bd" $schema $donnees
 elif [ "$1" = "reremplir" ]
 then
-	executer $sqlite_x "$assets/$nom_bd" $donnees
+	executer $sqlite_x "$doss_bd/$nom_bd" $donnees
 else
 	mourir "USAGE : $0 OPÉRATION\nOPÉRATION peut être :\n\t- \"recreer\" pour supprimer les tables et les recréer\n\t- \"reremplir\" pour uniquement renouveler les contenu des tables" 1
 fi
