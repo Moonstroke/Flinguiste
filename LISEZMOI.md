@@ -45,7 +45,7 @@ Les mots sont catégorisés selon leur **nature** grammaticale :
 - adjectif
 - verbe
 
-Les questions sont choisies aléatoirement<sup>[2](#note-2)</sup> dans la basse de données, sans doublon ;
+Les questions sont choisies aléatoirement<sup>[2](#note-2)</sup> dans la base de données, sans doublon ;
 les propositions sont choisies aléatoirement parmi toutes les définitions dont le mot est la valeur *SQLite* `NULL` ou la nature du mot est la même que le mot en exergue.
 
 
@@ -62,4 +62,5 @@ les propositions sont choisies aléatoirement parmi toutes les définitions dont
 ## Notes et références
 
 <a name="note-1">1</a> : valeur modifiable dans les **Paramètres**
+
 <a name="note-2">2</a> : grâce à la fonction `RANDOM()` intégrée à *SQLite*
